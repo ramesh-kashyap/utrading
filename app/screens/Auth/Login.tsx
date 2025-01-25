@@ -63,7 +63,7 @@ const Login = ({navigation} : LoginScreenProps) => {
                         <View style={GlobalStyleSheet.inputGroup}>
                             <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>Email</Text>
                             <Input
-                                placeholder={'Type your email'}
+                                placeholder={'Type your email id'}
                             />
                         </View>
                         <View style={GlobalStyleSheet.inputGroup}>
