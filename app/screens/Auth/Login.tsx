@@ -1,7 +1,5 @@
 import React from 'react';
-import { 
-    View, 
-    Text, 
+import {View, Text, 
     Image, 
     SafeAreaView, 
     ScrollView,
@@ -75,19 +73,18 @@ const Login = ({navigation} : LoginScreenProps) => {
                             <Text style={[GlobalStyleSheet.loginTitle,{color:colors.title}]}>Login Account</Text>
                             <Text style={[GlobalStyleSheet.loginDesc,{color:colors.text}]}>A crypto login is a secure authentication process that enables users to access</Text>
                         </View>
-                        <View>
-                        <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>Login with Google</Text> 
+                        <View>                         
                                 <Input value = ""/>
                                 <TouchableOpacity
                                     style={{
                                         position:'absolute',
-                                        height:81,
-                                        width:48,
+                                        height:50,
+                                        width:350,
                                         alignItems:'center',
                                         justifyContent:'center',
-                                        // right:376,
                                     }}
                                 >
+                                    <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>Login with Google</Text>
                                     <Image
                                         style={{
                                             height:20,

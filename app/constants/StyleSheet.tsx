@@ -104,7 +104,7 @@ export const GlobalStyleSheet = StyleSheet.create({
         borderBottomColor:COLORS.borderColor,
         paddingHorizontal:15,
         paddingVertical:15,
-    },
+       },
     cardBody : {
         paddingHorizontal:15,
         paddingVertical:15,
