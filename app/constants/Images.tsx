@@ -32,6 +32,7 @@ export const IMAGES = {
     whatsapp : require('../assets/images/icons/whatsapp.png'),
     facebook : require('../assets/images/icons/facebook.png'),
     twitter : require('../assets/images/icons/twitter.png'),
+    google: require('../assets/images/icons/google.png'),
     dollor : require('../assets/images/icons/dollor.png'),
     sun : require('../assets/images/icons/sun.png'),
 

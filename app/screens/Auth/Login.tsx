@@ -19,6 +19,21 @@ import Button from '../../components/Button/Button';
 
 type LoginScreenProps = StackScreenProps<RootStackParamList, 'Login'>;
 
+
+const socialLink = [
+    {
+        icon : IMAGES.facebook,
+    },
+    {
+        icon : IMAGES.whatsapp,
+    },
+    {
+        icon : IMAGES.instagram,
+    },
+    {
+        icon : IMAGES.twitter,
+    },
+]
 const Login = ({navigation} : LoginScreenProps) => {
 
     const {colors} : {colors : any} = useTheme();
@@ -60,8 +75,30 @@ const Login = ({navigation} : LoginScreenProps) => {
                             <Text style={[GlobalStyleSheet.loginTitle,{color:colors.title}]}>Login Account</Text>
                             <Text style={[GlobalStyleSheet.loginDesc,{color:colors.text}]}>A crypto login is a secure authentication process that enables users to access</Text>
                         </View>
+                        <View>
+                        <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>Login with Google</Text> 
+                                <Input value = ""/>
+                                <TouchableOpacity
+                                    style={{
+                                        position:'absolute',
+                                        height:81,
+                                        width:48,
+                                        alignItems:'center',
+                                        justifyContent:'center',
+                                        // right:376,
+                                    }}
+                                >
+                                    <Image
+                                        style={{
+                                            height:20,
+                                            width:20,
+                                        }}
+                                        source={IMAGES.google}
+                                    />
+                                </TouchableOpacity>
+                            </View>
                         <View style={GlobalStyleSheet.inputGroup}>
-                            <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>Email</Text>
+                            <Text style={[GlobalStyleSheet.label,{color:colors.title,marginTop:20,}]}>Email</Text>
                             <Input
                                 placeholder={'Type your email'}
                             />

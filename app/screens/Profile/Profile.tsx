@@ -168,7 +168,7 @@ const ProfileScreen = ({navigation} : ProfileScreenProps) => {
                         />
                     </View>   
                     <View style={{flex:1}}>
-                        <Text style={[FONTS.h5,FONTS.fontSemiBold,{color:COLORS.darkTitle,marginBottom:10}]}>Yatin Xarma</Text>
+                        <Text style={[FONTS.h5,FONTS.fontSemiBold,{color:COLORS.darkTitle,marginBottom:10}]}>Sachin Xarma</Text>
                         <Text style={[FONTS.fontXs,{color:COLORS.darkText}]}>yatin@example.com</Text>
                     </View>
                     <TouchableOpacity
