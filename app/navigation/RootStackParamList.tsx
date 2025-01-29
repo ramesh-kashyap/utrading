@@ -40,4 +40,6 @@ export type RootStackParamList = {
     TabStyle2: undefined;
     TabStyle3: undefined;
     TabStyle4: undefined;
+    Apibind: undefined;
+    Apimnd: undefined;
 };
