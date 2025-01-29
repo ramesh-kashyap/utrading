@@ -1,10 +1,12 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity, } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { COLORS, FONTS, SIZES } from '../../constants/theme';
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from '../../navigation/RootStackParamList';
 import { BottomTabParamList } from '../../navigation/BottomTabParamList';
+import { useNavigation } from "@react-navigation/native";
+
 type Props = {
     name : string;
     image : any;
@@ -13,7 +15,7 @@ type Props = {
 }
 
 const ApiList = ({name, image, description, link} : Props) => {
-  
+    const navigation = useNavigation();
     const {colors} : {colors : any} = useTheme();
 
     return (
@@ -50,8 +52,10 @@ const ApiList = ({name, image, description, link} : Props) => {
                 <Text style={[FONTS.fontSm,FONTS.fontBaseMedium,{color:colors.text,lineHeight:18}]}>{name}</Text>
             </View>
             <View style={{alignItems:'flex-end'}}>
-                <Text style={[FONTS.h6,FONTS.fontBaseSemiBold,{color:colors.title,marginBottom:2}]} onPress={() => navigation.navigate('Apibind')}>{description} </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Apimnd')}>
+                <Text style={[FONTS.h6,FONTS.fontBaseSemiBold,{color:colors.title,marginBottom:2}]} >{description} </Text>
                 <Text style={[FONTS.fontXs,FONTS.fontBaseMedium,{color: parseInt(link) > 0 ? COLORS.success : COLORS.danger}]}>{link}</Text>
+                </TouchableOpacity>
             </View>
         </View>
     )
