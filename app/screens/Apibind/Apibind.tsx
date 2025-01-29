@@ -1,7 +1,8 @@
 import React from "react";
 import {View, Text, SafeAreaView, ScrollView, Platform } from "react-native";
 // import WalletList from "../../components/List/WalletList";
-import ApiList from "../Components/ApiList";
+import ApiList from "./ApiList";
+
 import {IMAGES} from '../../constants/Images';
 import { GlobalStyleSheet } from '../../constants/StyleSheet';
 import { CompositeScreenProps, useTheme } from '@react-navigation/native';
@@ -9,7 +10,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from '../../navigation/RootStackParamList';
 import { BottomTabParamList } from '../../navigation/BottomTabParamList';
 import Header from '../../layout/Header';
-
+import { useNavigation } from "@react-navigation/native";
 type ApibindProps = StackScreenProps<RootStackParamList, "Apibind">;
 
 const exchanges = [
@@ -70,6 +71,7 @@ const exchanges = [
 ]
 
 const Apibind: React.FC<ApibindProps> = ({ navigation }) =>{
+
     const theme = useTheme();
         const {colors} : {colors : any} = theme;
 
@@ -97,7 +99,7 @@ const Apibind: React.FC<ApibindProps> = ({ navigation }) =>{
                     image={data.image}
                     name={data.name}
                     description="Import"
-                    link={() => navigation.navigate("Apimnd", { name: data.name })}
+                    
                     key={index}
                     />
                 )      
