@@ -95,9 +95,9 @@ const Login = ({navigation} : LoginScreenProps) => {
                                 </TouchableOpacity>
                             </View>
                         <View style={GlobalStyleSheet.inputGroup}>
-                            <Text style={[GlobalStyleSheet.label,{color:colors.title,marginTop:20,}]}>Email</Text>
+                            <Text style={[GlobalStyleSheet.label,{color:colors.title,marginTop:20,}]}>Phone</Text>
                             <Input
-                                placeholder={'Type your email'}
+                                placeholder={'Type your phone number'}
                             />
                         </View>
                         <View style={GlobalStyleSheet.inputGroup}>

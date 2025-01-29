@@ -41,7 +41,8 @@ import TabStyle3 from '../components/Footers/FooterStyle3';
 import TabStyle4 from '../components/Footers/FooterStyle4';
 import { Platform, StatusBar, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
-
+import Apibind from '../screens/Apibind/Apibind';
+import Apimnd from '../screens/Apibind/Apimnd';
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
@@ -99,6 +100,8 @@ const StackNavigator = () => {
                 <Stack.Screen name="TabStyle2" component={TabStyle2} />
                 <Stack.Screen name="TabStyle3" component={TabStyle3} />
                 <Stack.Screen name="TabStyle4" component={TabStyle4} />
+                <Stack.Screen name="Apibind" component={Apibind}/>
+                <Stack.Screen name="Apimnd" component={Apimnd}/>
             </Stack.Navigator>
         </View>
     )

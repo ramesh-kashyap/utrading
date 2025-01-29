@@ -168,7 +168,7 @@ const WalletScreen = ({navigation} : WalletScreenProps) => {
                                     color={COLORS.primary}
                                 />
                             </View>
-                            <Text style={[FONTS.fontSm,{color:colors.text,lineHeight:18}]}>Hide 0 Balance</Text>
+                            <Text style={[FONTS.fontSm,{color:colors.text,lineHeight:18}]} onPress={() => navigation.navigate('Apibind')}>Hide 0 Balance</Text>
                         </View>
                     </View>
                     <View>
