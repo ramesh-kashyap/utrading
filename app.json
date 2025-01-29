@@ -24,6 +24,13 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d5936d8a-2709-48a8-854c-54b9b32d294c"
+      },
+      "googleClientId": "990050944679-nm8b6jrg7rsth4ho0844jl2ifl0o2ejk.apps.googleusercontent.com"
+    },
+    "owner": "maticdefi036"
   }
 }

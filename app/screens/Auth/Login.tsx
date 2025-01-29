@@ -1,23 +1,38 @@
-import React from 'react';
+import React , { useState ,  useEffect}  from 'react';
 import {View, Text, 
     Image, 
     SafeAreaView, 
     ScrollView,
+    Alert,
+    Platform,
     TouchableOpacity
 } from 'react-native';
+import * as AuthSession from 'expo-auth-session';
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from '../../navigation/RootStackParamList';
-import { useTheme } from '@react-navigation/native';
+import { useTheme, useNavigation } from '@react-navigation/native';
 import { IMAGES } from '../../constants/Images';
 import { FONTS } from '../../constants/theme';
 import { GlobalStyleSheet } from '../../constants/StyleSheet';
+import Api2, { googleAuth } from "../../../services/Api";
+import Api from "../../../services/Api";
+
+
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../../layout/Header';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 
+import * as WebBrowser from "expo-web-browser";
+import * as Google from 'expo-auth-session';
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+
+
 type LoginScreenProps = StackScreenProps<RootStackParamList, 'Login'>;
 
-
+WebBrowser.maybeCompleteAuthSession();
 const socialLink = [
     {
         icon : IMAGES.facebook,
@@ -32,11 +47,86 @@ const socialLink = [
         icon : IMAGES.twitter,
     },
 ]
-const Login = ({navigation} : LoginScreenProps) => {
 
+const GOOGLE_CLIENT_ID = '990050944679-nm8b6jrg7rsth4ho0844jl2ifl0o2ejk.apps.googleusercontent.com';
+const Login = () => {
+    const navigation = useNavigation();
+    const [phone, setPhone] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordType, setPasswordType] = useState(true); // true for hidden, false for visible
+    const [isLoading, setIsLoading] = useState(false);
     const {colors} : {colors : any} = useTheme();
+     
+    const togglePasswordView = () => setPasswordType(!passwordType);
 
-    //const {setDarkTheme,setLightTheme} = React.useContext(ThemeContext);
+    const handleSubmit = async () => {
+      if (!phone || !password) {
+        Alert.alert("Error", "Please fill in all fields.");
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const response = await Api.post("/login", {
+          phone: phone,
+          password: password,
+        });
+  
+        if (response.data.status) {
+          Alert.alert("Error", response.data.message);
+        } else {
+          await AsyncStorage.setItem("authToken", response.data.token);
+          navigation.navigate("Home"); // Redirect to the Home screen
+        }
+      } catch (error) {
+        console.error("Error during login:", error.response || error.message || error);
+        Alert.alert("Error", "An error occurred during the login process.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+   
+    
+     
+    
+      
+    const [accessToken, setAccessToken] = useState(null);
+    const [userInfo, setUserInfo] = useState(null);
+    const [loading, setLoading] = useState(false);
+  
+   
+  
+    const [request, response, promptAsync] = Google.useAuthRequest({
+        clientId: Platform.select({
+          
+          android: '990050944679-nm8b6jrg7rsth4ho0844jl2ifl0o2ejk.apps.googleusercontent.com',
+          // Use different clientId for web if needed
+        }),
+      });
+    
+      useEffect(() => {
+        if (response?.type === 'success') {
+          const { id_token } = response.params;
+          fetchUserInfo(id_token);  // Fetch user info after successful login
+        } else if (response?.type === 'dismiss') {
+          console.log('Authentication was dismissed by the user.');
+          Alert.alert('Authentication was canceled.');
+        }
+      }, [response]);
+    
+      const fetchUserInfo = async (idToken) => {
+        try {
+          const userInfoResponse = await fetch(
+            `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${idToken}`
+          );
+          const userInfo = await userInfoResponse.json();
+          setUserInfo(userInfo);  // Set the user info in the state
+        } catch (error) {
+          console.error('Error fetching user info:', error);
+        }
+      };
+  
+      //const {setDarkTheme,setLightTheme} = React.useContext(ThemeContext);
 
     return (
         <SafeAreaView
@@ -83,6 +173,7 @@ const Login = ({navigation} : LoginScreenProps) => {
                                         alignItems:'center',
                                         justifyContent:'center',
                                     }}
+                                    onPress={() => promptAsync()}
                                 >
                                     <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>Login with Google</Text>
                                     <Image
