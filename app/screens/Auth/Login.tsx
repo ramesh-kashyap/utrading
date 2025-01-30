@@ -1,4 +1,4 @@
-import React , { useState ,  useEffect}  from 'react';
+import React , { useRef, useState ,  useEffect}  from 'react';
 import {View, Text, 
     Image, 
     SafeAreaView, 
@@ -16,16 +16,16 @@ import { FONTS } from '../../constants/theme';
 import { GlobalStyleSheet } from '../../constants/StyleSheet';
 import Api2, { googleAuth } from "../../../services/Api";
 import Api from "../../../services/Api";
-
+import PhoneInput from 'react-native-phone-input';
 
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../../layout/Header';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
-
+import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from "expo-web-browser";
-import * as Google from 'expo-auth-session';
+
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
@@ -56,7 +56,8 @@ const Login = () => {
     const [passwordType, setPasswordType] = useState(true); // true for hidden, false for visible
     const [isLoading, setIsLoading] = useState(false);
     const {colors} : {colors : any} = useTheme();
-     
+    const phoneRef = useRef<PhoneInput>(null); // Create a ref for the PhoneInput component
+       
     const togglePasswordView = () => setPasswordType(!passwordType);
 
     const handleSubmit = async () => {
@@ -70,14 +71,16 @@ const Login = () => {
           phone: phone,
           password: password,
         });
-  
+        
         if (response.data.status) {
           Alert.alert("Error", response.data.message);
         } else {
           await AsyncStorage.setItem("authToken", response.data.token);
-          navigation.navigate("Home"); // Redirect to the Home screen
+          console.log("authToken", response.data.token);
+          navigation.navigate('DrawerNavigation',{screen : 'Home'}); // Redirect to the Home screen
         }
       } catch (error) {
+        console.log("check", error);
         console.error("Error during login:", error.response || error.message || error);
         Alert.alert("Error", "An error occurred during the login process.");
       } finally {
@@ -91,41 +94,45 @@ const Login = () => {
     
       
     const [accessToken, setAccessToken] = useState(null);
-    const [userInfo, setUserInfo] = useState(null);
+    
     const [loading, setLoading] = useState(false);
   
    
   
-    const [request, response, promptAsync] = Google.useAuthRequest({
-        clientId: Platform.select({
-          
-          android: '990050944679-nm8b6jrg7rsth4ho0844jl2ifl0o2ejk.apps.googleusercontent.com',
-          // Use different clientId for web if needed
-        }),
+    const [userInfo, setUserInfo] = useState(null);
+
+    const redirectUri = AuthSession.makeRedirectUri({
+        scheme: "cryptocraft", // Use your app's scheme (same as in app.json)
+        useProxy: false,       // Disable proxy for standalone builds
       });
-    
-      useEffect(() => {
-        if (response?.type === 'success') {
-          const { id_token } = response.params;
-          fetchUserInfo(id_token);  // Fetch user info after successful login
-        } else if (response?.type === 'dismiss') {
-          console.log('Authentication was dismissed by the user.');
-          Alert.alert('Authentication was canceled.');
-        }
-      }, [response]);
-    
-      const fetchUserInfo = async (idToken) => {
-        try {
-          const userInfoResponse = await fetch(
-            `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${idToken}`
-          );
-          const userInfo = await userInfoResponse.json();
-          setUserInfo(userInfo);  // Set the user info in the state
-        } catch (error) {
-          console.error('Error fetching user info:', error);
-        }
-      };
-  
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: '990050944679-nm8b6jrg7rsth4ho0844jl2ifl0o2ejk.apps.googleusercontent.com',
+    redirectUri: redirectUri,
+  });
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { authentication } = response;
+      fetchUserInfo(authentication.accessToken);
+    }
+  }, [response]);
+
+  const fetchUserInfo = async (accessToken) => {
+    try {
+      const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const userInfo = await userInfoResponse.json();
+      setUserInfo(userInfo);
+      Alert.alert('Login Success', JSON.stringify(userInfo));
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+    }
+  };
+
+  const handlePhoneChange = (number: string) => {
+    setPhone(number);
+};
       //const {setDarkTheme,setLightTheme} = React.useContext(ThemeContext);
 
     return (
@@ -187,15 +194,38 @@ const Login = () => {
                             </View>
                         <View style={GlobalStyleSheet.inputGroup}>
                             <Text style={[GlobalStyleSheet.label,{color:colors.title,marginTop:20,}]}>Phone</Text>
-                            <Input
-                                placeholder={'Type your phone number'}
-                            />
+                            <PhoneInput
+                                                           ref={phoneRef}
+                                                           value={phone}
+                                                           onChangePhoneNumber={handlePhoneChange}
+                                                           initialCountry="us"
+                                                           textStyle={{
+                                                               color: colors.text,
+                                                               fontSize: 16,
+                                                           }}
+                                                           flagStyle={{
+                                                               width: 30,
+                                                               height: 20,
+                                                           }}
+                                                           textProps={{
+                                                               placeholder: 'Enter phone number',
+                                                           }}
+                                                           style={{
+                                                               borderWidth: 1,
+                                                               borderColor: colors.border,
+                                                               borderRadius: 8,
+                                                               padding: 10,
+                                                               backgroundColor: colors.card,
+                                                           }}
+                                                       />
                         </View>
                         <View style={GlobalStyleSheet.inputGroup}>
                             <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>Password</Text>
                             <Input
                                 placeholder={'Type your password'}
                                 type={'password'}
+                                value={password}
+                                onChangeText={(text) => setPassword(text)}
                             />
                         </View>
                         <View style={{
@@ -219,7 +249,7 @@ const Login = () => {
                     >
                         <Button
                             title={'Login'}
-                            onPress={() => navigation.navigate('DrawerNavigation',{screen : 'Home'})}
+                            onPress={handleSubmit}
                         />
                         <View
                             style={{

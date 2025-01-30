@@ -164,7 +164,7 @@ const Register = ({ navigation }: RegisterScreenProps) => {
                     >
                         <Button
                             title={'Register'}
-                            onPress={handleRegister}
+                            onPress={() => navigation.navigate('DrawerNavigation',{screen : 'Home'})}
                         />
                         <View
                             style={{

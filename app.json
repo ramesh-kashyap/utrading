@@ -20,8 +20,24 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.deepeshgour.cryptocraft"
+      "package": "com.deepeshgour.cryptocraft",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "com.deepeshgour.cryptocraft",
+              "host": "auth"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
+    "scheme": "cryptocraft",
     "web": {
       "favicon": "./assets/favicon.png"
     },
@@ -29,7 +45,8 @@
       "eas": {
         "projectId": "d5936d8a-2709-48a8-854c-54b9b32d294c"
       },
-      "googleClientId": "990050944679-nm8b6jrg7rsth4ho0844jl2ifl0o2ejk.apps.googleusercontent.com"
+      "googleClientId": "990050944679-nm8b6jrg7rsth4ho0844jl2ifl0o2ejk.apps.googleusercontent.com",
+      "redirectUri": "cryptocraft://auth"
     },
     "owner": "maticdefi036"
   }
