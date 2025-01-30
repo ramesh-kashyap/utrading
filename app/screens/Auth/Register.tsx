@@ -114,6 +114,12 @@ const Register = ({ navigation }: RegisterScreenProps) => {
                                     />
                                 </TouchableOpacity>
                             </View>
+
+                            <View style={GlobalStyleSheet.inputGroup}>
+                            <Text style={[GlobalStyleSheet.label, { color: colors.title }]}>Name</Text>
+                            <Input placeholder={'Type your name'} type={'text'}/>
+                            </View>
+
                         <View style={GlobalStyleSheet.inputGroup}>
                             <Text style={[GlobalStyleSheet.label, { color: colors.title }]}>Phone</Text>
                             {/* PhoneInput Component */}
@@ -159,9 +165,7 @@ const Register = ({ navigation }: RegisterScreenProps) => {
                         </View>
                     </View>
 
-                    <View
-                        style={GlobalStyleSheet.loginBtnArea}
-                    >
+                    <View style={GlobalStyleSheet.loginBtnArea}>
                         <Button
                             title={'Register'}
                             onPress={() => navigation.navigate('DrawerNavigation',{screen : 'Home'})}

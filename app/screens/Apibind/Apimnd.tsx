@@ -1,11 +1,12 @@
 import React from "react";
-import {View, Text, SafeAreaView, ScrollView, Platform } from "react-native";
+import {View, Text, SafeAreaView, ScrollView, Platform, TouchableOpacity  } from "react-native";
 import { useTheme } from '@react-navigation/native';
 import { GlobalStyleSheet } from '../../constants/StyleSheet';
 import { COLORS, FONTS, SIZES } from '../../constants/theme';
 import Input from "../../components/Input/Input";
 import Header from "../../layout/Header";
 import {FontAwesome} from '@expo/vector-icons';
+import Button from '../../components/Button/Button';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 const Apimnd =()=>{
@@ -22,6 +23,7 @@ const Apimnd =()=>{
             <Header 
                 title={'Inputs'}  
                 leftIcon={'back'}
+                leftAction={() => navigation.navigate('Apibind')}
             />
             <ScrollView>
                 <View style={GlobalStyleSheet.container}>
@@ -54,6 +56,32 @@ const Apimnd =()=>{
                                     onChangeText={(value)=> console.log(value)}
                                 />
                             </View>
+
+                            <View style={GlobalStyleSheet.loginBtnArea}>
+                        <Button
+                            title={'Register'}
+                            onPress={handleRegister}
+                        />
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                paddingVertical: 15,
+                            }}
+                        >
+                            <Text style={{ ...FONTS.font, color: colors.title }}>Already have an account? </Text>
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate('Login')}
+                                style={{
+                                    position: 'relative',
+                                }}
+                            >
+                                <Text style={GlobalStyleSheet.linkBtn}>Login</Text>
+                                <View style={GlobalStyleSheet.linkUnderLine} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
                         </View>
                     </View>
                 </View>
