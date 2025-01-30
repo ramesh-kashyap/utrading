@@ -54,4 +54,13 @@ export const IMAGES = {
     usdt : require('../assets/images/coins/usdt.png'),
     ethereum : require('../assets/images/coins/ethereum.png'),
     ripple : require('../assets/images/coins/ripple.png'),
+    Binance: require('../assets/images/small/Binanc.jpg'),
+    BinanceUS: require('../assets/images/small/Binance US.jpg'),
+    OKX: require('../assets/images/small/okx.jpg'),
+    Bybit: require('../assets/images/small/bybit.jpg'),
+    Bitget: require('../assets/images/small/bitget.jpg'),
+    Kucoin: require('../assets/images/small/kucoin.jpg'),
+    Bitfinex: require('../assets/images/small/Bitfinex.jpg'),
+    HTXGlobal: require('../assets/images/small/htxglobal.jpg'),
+    KrakenSpot: require('../assets/images/small/Kraken.jpg'),
 }

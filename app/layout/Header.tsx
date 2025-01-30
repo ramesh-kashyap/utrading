@@ -44,8 +44,7 @@ const Header = ({title, leftIcon, leftAction} : Props) => {
                 {leftIcon === 'back' && 
                     <TouchableOpacity 
                     onPress={() => leftAction ? leftAction() : navigation.goBack()}
-                    style={styles.actionBtn}
-                    >
+                    style={styles.actionBtn}>
                         <Feather  size={24} color={colors.title} name='chevron-left'/>
                     </TouchableOpacity>
                 }
@@ -57,7 +56,7 @@ const Header = ({title, leftIcon, leftAction} : Props) => {
 
 const styles = StyleSheet.create({
     header : {
-        height:45,
+        height:50,
         backgroundColor:'rgba(255,255,255,.1)',
         flexDirection:'row',
         alignItems:'center',
