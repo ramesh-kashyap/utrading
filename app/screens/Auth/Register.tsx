@@ -17,6 +17,7 @@ import Header from '../../layout/Header';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import PhoneInput from 'react-native-phone-input';
+import { Background } from 'victory-native';
 
 type RegisterScreenProps = StackScreenProps<RootStackParamList, 'Register'>;
 
@@ -124,29 +125,38 @@ const Register = ({ navigation }: RegisterScreenProps) => {
                             <Text style={[GlobalStyleSheet.label, { color: colors.title }]}>Phone</Text>
                             {/* PhoneInput Component */}
                             <PhoneInput
-                                ref={phoneRef}
-                                value={phone}
-                                onChangePhoneNumber={handlePhoneChange}
-                                initialCountry="us"
-                                textStyle={{
-                                    color: colors.text,
-                                    fontSize: 16,
-                                }}
-                                flagStyle={{
-                                    width: 30,
-                                    height: 20,
-                                }}
-                                textProps={{
-                                    placeholder: 'Enter phone number',
-                                }}
-                                style={{
-                                    borderWidth: 1,
-                                    borderColor: colors.border,
-                                    borderRadius: 8,
-                                    padding: 10,
-                                    backgroundColor: colors.card,
-                                }}
-                            />
+    ref={phoneRef}
+    value={phone}
+    onChangePhoneNumber={handlePhoneChange}
+    initialCountry="us"
+    textStyle={{
+        color: colors.text,
+        fontSize: 16,
+    }}
+    container={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#fff",        
+    }}
+    flagStyle={{
+        width: 30,
+        height: 20,
+    }}
+    textProps={{
+        placeholder: 'Enter phone number',
+    }}
+    style={{
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: 8,
+        padding: 10,
+        backgroundColor: colors.card,
+    }}
+    // pickerBackgroundColor={"#000"}  
+    // pickerTextStyle={{ color: "#fff" }} 
+/>
+
                         </View>
 
                         <View style={GlobalStyleSheet.inputGroup}>

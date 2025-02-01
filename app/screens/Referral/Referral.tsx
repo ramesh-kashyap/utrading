@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, Image, Button, Alert, Share} from 'react-native';
 import { CompositeScreenProps, useTheme } from '@react-navigation/native';
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from '../../navigation/RootStackParamList';
@@ -9,20 +9,21 @@ import Header from '../../layout/Header';
 import { COLORS, SIZES, FONTS } from '../../constants/theme';
 import { IMAGES } from '../../constants/Images';
 import Input from '../../components/Input/Input';
+import * as Linking from 'expo-linking'
 
 const socialLink = [
     {
         icon : IMAGES.facebook,
     },
-    {
-        icon : IMAGES.whatsapp,
-    },
-    {
-        icon : IMAGES.instagram,
-    },
-    {
-        icon : IMAGES.twitter,
-    },
+    // {
+    //     icon : IMAGES.whatsapp,
+    // },
+    // {
+    //     icon : IMAGES.instagram,
+    // },
+    // {
+    //     icon : IMAGES.twitter,
+    // },
 ]
 
 const tableData = [
@@ -57,6 +58,29 @@ const tableData = [
         amount:'(0.04 BTC)',
     },
 ]
+
+const shareAndOpen = async () => {
+    const sharedLink = 'https://example.com'; // Replace with your actual link
+
+    try {
+        const result = await Share.share({
+            message: `Check this out! ${sharedLink}`,
+            url: sharedLink, // URL to share
+        });
+
+        // If the user successfully shares, open the link
+        if (result.action === Share.sharedAction) {
+            setTimeout(() => {
+                Linking.openURL(sharedLink).catch((err) =>
+                    Alert.alert('Error', 'Could not open the link')
+                );
+            }, 2000); // Small delay to ensure sharing completes
+        }
+    } catch (error) {
+        console.log('Error sharing:', error);
+    }
+};
+
 
 type ReferralScreenProps = CompositeScreenProps<
     StackScreenProps<BottomTabParamList, 'Referral'>,
@@ -151,18 +175,19 @@ const ReferralScreen = ({navigation} : ReferralScreenProps) => {
                                 return(
                                     <TouchableOpacity key={index}
                                         style={[{
-                                            ...styles.socialIcon,
-                                            backgroundColor:"rgba(255,255,255,.1)"
+                                            // ...styles.socialIcon,
+                                            // backgroundColor:"rgba(255,255,255,.1)"
                                         }]}
-                                    >
-                                        <Image
+                                        >
+                                        {/* <Image  
                                             style={{
                                                 height:20,
                                                 width:20,
                                                 resizeMode:'contain',
                                             }}
                                             source={data.icon}
-                                        />
+                                        /> */}
+                                        <Button title="Share & Open Link" onPress={shareAndOpen} />
                                     </TouchableOpacity>
                                 )
                             })}
@@ -214,6 +239,7 @@ const ReferralScreen = ({navigation} : ReferralScreenProps) => {
                                     backgroundColor:colors.card,
                                 }}
                             >   
+                            
                                 <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:10}}>
                                     <View
                                         style={{
