@@ -1,10 +1,11 @@
-import React from 'react';
+import React ,{  useState } from 'react';
 import { 
     View, 
     Text, 
     Image, 
     SafeAreaView, 
     ScrollView,
+    Alert,
     TouchableOpacity
 } from 'react-native';
 import { StackScreenProps } from "@react-navigation/stack";
@@ -14,14 +15,64 @@ import { IMAGES } from '../../constants/Images';
 import { COLORS, FONTS, SIZES } from '../../constants/theme';
 import { GlobalStyleSheet } from '../../constants/StyleSheet';
 import Header from '../../layout/Header';
-import OTPTextInput from 'react-native-otp-textinput';
+import { OtpInput } from "react-native-otp-entry";
 import Button from '../../components/Button/Button';
-
+import Api from '../../../services/Api';
+import { useRouter } from 'expo-router';
 type OTPAuthenticationScreenProps = StackScreenProps<RootStackParamList, 'OTPAuthentication'>;
 
-const OTPAuthentication = ({navigation} : OTPAuthenticationScreenProps) => {
+const OTPAuthentication = ({route,navigation} : OTPAuthenticationScreenProps) => {
 
     const {colors} : {colors : any} = useTheme();
+    const [otp, setOtp] = useState('');
+    const { userName, userPhone, userPassword } = route.params;
+    const handleOTPChange = (value) => {
+        console.log("OTP Entered:", value);
+        if (value.length <= 6) { // Assuming a 6-digit OTP
+            setOtp(value);
+        }
+    };
+    const handleVerifyOtp = async () => {
+        if (!otp) {
+            Alert.alert('Error', 'Please enter the OTP');
+            return;
+        }
+        console.log("phone",userPhone) ; 
+        try {
+            const response = await Api.post('/verify-otp', { phone: userPhone, otp });
+            console.log(response.data);
+            if (response.data.success) {
+                Alert.alert('OTP Verified', 'Proceeding with registration');
+                
+                // Call API to register the user
+                handleRegister();
+            } else {
+                Alert.alert('Error', 'Invalid OTP');
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to verify OTP');
+            console.log(error);
+        }
+    };
+
+    const handleRegister = async () => {
+        try {
+            const response = await Api.post('/register', {
+                name: userName,
+                phone: userPhone,
+                password: userPassword,
+            });
+            console.log(response.data);
+            Alert.alert('Success', 'Registration successful');
+            
+            // Navigate to HomeScreen with user data
+            navigation.navigate('Login');
+
+        } catch (error) {
+            Alert.alert('Error', 'Registration failed');
+            console.log(error.response);
+        }
+    };
 
     return (
         <SafeAreaView
@@ -60,20 +111,18 @@ const OTPAuthentication = ({navigation} : OTPAuthenticationScreenProps) => {
                             <Text style={[GlobalStyleSheet.loginDesc,{color:colors.text}]}>A verification code has been dispatched to you at your email address.</Text>
                         </View>
                         <View style={GlobalStyleSheet.inputGroup}>
-                            <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>Email</Text>
+                            <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>Phone</Text>
                             <View style={{alignItems:'center'}}>
-                                <OTPTextInput 
-                                    tintColor={COLORS.primary}
-                                    textInputStyle={{
-                                        borderBottomWidth : 2,
-                                        color :colors.title,
-                                    }}
-                                    containerStyle={{
-                                        width : 300,
-                                        marginVertical:20
-                                    }}
-                                    
-                                />
+                            <OtpInput
+                numberOfDigits={6}
+                focusColor="blue"
+                onTextChange={(value) => setOtp(value)}
+                theme={{
+                    containerStyle: { marginBottom: 20 },
+                    pinCodeContainerStyle: { borderBottomWidth: 2 },
+                    pinCodeTextStyle: { fontSize: 20, color: "white" }
+                }}
+            />
                             </View>
                         </View>
                         <View style={{
@@ -96,7 +145,7 @@ const OTPAuthentication = ({navigation} : OTPAuthenticationScreenProps) => {
                     >
                         <Button
                             title={'Submit'}
-                            onPress={() => navigation.navigate('ResetPassword')}
+                            onPress={handleVerifyOtp}
                         />
                         <View
                             style={{

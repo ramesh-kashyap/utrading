@@ -11,7 +11,8 @@ import { COLORS, FONTS, SIZES } from '../../constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { IMAGES } from '../../constants/Images';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 const menuData = [
     {
         icon : IMAGES.verification,
@@ -41,7 +42,7 @@ const menuData = [
     {
         icon : IMAGES.logout,
         title : "Log out",
-        navigate : 'Login',
+        // navigate : 'Login',
     },
 ]
 
@@ -93,7 +94,26 @@ const ProfileScreen = ({navigation} : ProfileScreenProps) => {
 
     const bottomSheetRef = useRef<any>(null);
     const snapPoints = useMemo(() => ['60%'], []);
-
+    const handleLogout = async () => {
+        try {
+            
+            await AsyncStorage.removeItem('authToken');  // Remove user token from AsyncStorage
+            const token = await AsyncStorage.getItem('authToken');
+            if (token === null) {
+              console.log('Token successfully removed');
+            } else {
+              console.log('Token removal failed');
+            }
+            navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: 'Login' }],
+                })
+              );
+        } catch (error) {
+            console.error('Error removing token from AsyncStorage:', error);  // Error handling
+        }
+    };
     const handleSheetChanges = useCallback((index: number) => {
         console.log('handleSheetChanges', index);
     }, []);
@@ -108,6 +128,7 @@ const ProfileScreen = ({navigation} : ProfileScreenProps) => {
         ),
         []
     );
+    
 
     return (
         <SafeAreaView
@@ -202,11 +223,15 @@ const ProfileScreen = ({navigation} : ProfileScreenProps) => {
                             <TouchableOpacity
                                 key={index}
                                 onPress={() => {
-                                    data.type === "language"
-                                        ?
-                                        bottomSheetRef.current.snapToIndex(0)
-                                        :
-                                        data.navigate && navigation.navigate(data.navigate)
+                                    // If it's a "language" option, open the bottom sheet for language selection
+                                    // Otherwise, if it's the "Log out" option, trigger the handleLogout function
+                                    if (data.type === "language") {
+                                        bottomSheetRef.current.snapToIndex(0);  // Open the language bottom sheet
+                                    } else if (data.title === "Log out") {
+                                        handleLogout();  // Call the handleLogout function when "Log out" is clicked
+                                    } else {
+                                        data.navigate && navigation.navigate(data.navigate);  // Navigate to other screens
+                                    }
                                 }}
                                 style={{
                                     marginBottom:8,

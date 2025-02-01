@@ -3,16 +3,20 @@ import BottomNavigation from './BottomNavigation';
 import { DrawerParamList } from './DrawerParamList';
 import DrawerMenu from '../layout/DrawerMenu';
 import { SafeAreaView } from 'react-native';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
 function DrawerNavigation() {
     return (
+        
         <SafeAreaView
             style={{
                 flex:1,
             }}
         >
+            
+            
             <Drawer.Navigator
                 screenOptions={{
                     headerShown : false,
@@ -22,7 +26,10 @@ function DrawerNavigation() {
                 >
                 <Drawer.Screen name="BottomTab" component={BottomNavigation} />
             </Drawer.Navigator>
+         
         </SafeAreaView>
+       
+
     );
 }
 

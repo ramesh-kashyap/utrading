@@ -43,68 +43,87 @@ import { Platform, StatusBar, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import Apibind from '../screens/Apibind/Apibind';
 import Apimnd from '../screens/Apibind/Apimnd';
+import { useAuth } from '../Helper/AuthContext';
+import { CommonActions } from '@react-navigation/native';
+import ProtectedRoute from '../Helper/ProtectedRoute';
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
-
     const theme = useTheme();
+    const { isAuthenticated } = useAuth();
 
     return (
-        <View style={{width:'100%', flex: 1 }}>
-            {Platform.OS === 'web' || Platform.OS === 'android' &&
-                <StatusBar barStyle={theme.dark ? "light-content" : "dark-content"} />
-            }
+        <View style={{ width: '100%', flex: 1 }}>
+            {Platform.OS === 'web' || Platform.OS === 'android' && (
+                <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
+            )}
             <Stack.Navigator
-                initialRouteName='OnBoarding'
+                initialRouteName={isAuthenticated ? 'DrawerNavigation' : 'OnBoarding'} // Set initial route based on authentication
                 screenOptions={{
-                    headerShown:false,
-                    cardStyle: { backgroundColor: "transparent",flex:1 },
+                    headerShown: false,
+                    cardStyle: { backgroundColor: 'transparent', flex: 1 },
                     cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
                 }}
             >
-                <Stack.Screen name="OnBoarding" component={OnBoarding} />
-                <Stack.Screen name="Login" component={Login} />
-                <Stack.Screen name="Register" component={Register} />
-                <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-                <Stack.Screen name="OTPAuthentication" component={OTPAuthentication} />
-                <Stack.Screen name="ResetPassword" component={ResetPassword} />
-                <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} />
-                <Stack.Screen name="Settings" component={Settings} />
-                <Stack.Screen name="ChangePassword" component={ChangePassword} />
-                <Stack.Screen name="TwoStepAuthentication" component={TwoStepAuthentication} />
-                <Stack.Screen name="Support" component={Support} />
-                <Stack.Screen name="History" component={History} />
-                <Stack.Screen name="Verification" component={Verification} />
-                <Stack.Screen name="EditProfile" component={EditProfile} />
-                <Stack.Screen name="Notifications" component={Notifications} />
-                <Stack.Screen name="Components" component={Components} />
-                <Stack.Screen name="Accordion" component={AccordionScreen} />
-                <Stack.Screen name="BottomSheet" component={BottomSheet} />
-                <Stack.Screen name="ModalBox" component={ModalBox} />
-                <Stack.Screen name="Buttons" component={Buttons} />
-                <Stack.Screen name="Badges" component={Badges} />
-                <Stack.Screen name="Charts" component={Charts} />
-                <Stack.Screen name="Headers" component={Headers} />
-                <Stack.Screen name="lists" component={ListScreen} />
-                <Stack.Screen name="Pricings" component={Pricings} />
-                <Stack.Screen name="DividerElements" component={DividerElements} />
-                <Stack.Screen name="Snackbars" component={Snackbars} />
-                <Stack.Screen name="Socials" component={Socials} />
-                <Stack.Screen name="Swipeable" component={SwipeableScreen} />
-                <Stack.Screen name="Tabs" component={Tabs} />
-                <Stack.Screen name="Tables" component={Tables} />
-                <Stack.Screen name="Toggles" component={Toggles} />
-                <Stack.Screen name="Inputs" component={Inputs} />
-                <Stack.Screen name="Footers" component={Footers} />
-                <Stack.Screen name="TabStyle1" component={TabStyle1} />
-                <Stack.Screen name="TabStyle2" component={TabStyle2} />
-                <Stack.Screen name="TabStyle3" component={TabStyle3} />
-                <Stack.Screen name="TabStyle4" component={TabStyle4} />
-                <Stack.Screen name="Apibind" component={Apibind}/>
-                <Stack.Screen name="Apimnd" component={Apimnd}/>
+                {/* Render unauthenticated screens */}
+               
+                        <Stack.Screen name="OnBoarding" component={OnBoarding} />
+                        <Stack.Screen name="Login" component={Login} />
+                        <Stack.Screen name="Register" component={Register} />
+                        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+                        <Stack.Screen name="OTPAuthentication" component={OTPAuthentication} />
+                        <Stack.Screen name="ResetPassword" component={ResetPassword} />
+                 
+
+                {/* Render authenticated screens */}
+                {isAuthenticated && (
+                    <>
+                        <Stack.Screen name="DrawerNavigation">
+                            {(props) => (
+                                <ProtectedRoute>
+                                    <DrawerNavigation {...props} />
+                                </ProtectedRoute>
+                            )}
+                        </Stack.Screen>
+                        {/* Other authenticated screens */}
+                        <Stack.Screen name="Settings" component={Settings} />
+                        <Stack.Screen name="ChangePassword" component={ChangePassword} />
+                        <Stack.Screen name="TwoStepAuthentication" component={TwoStepAuthentication} />
+                        <Stack.Screen name="Support" component={Support} />
+                        <Stack.Screen name="History" component={History} />
+                        <Stack.Screen name="Verification" component={Verification} />
+                        <Stack.Screen name="EditProfile" component={EditProfile} />
+                        <Stack.Screen name="Notifications" component={Notifications} />
+                        <Stack.Screen name="Components" component={Components} />
+                        <Stack.Screen name="Accordion" component={AccordionScreen} />
+                        <Stack.Screen name="BottomSheet" component={BottomSheet} />
+                        <Stack.Screen name="ModalBox" component={ModalBox} />
+                        <Stack.Screen name="Buttons" component={Buttons} />
+                        <Stack.Screen name="Badges" component={Badges} />
+                        <Stack.Screen name="Charts" component={Charts} />
+                        <Stack.Screen name="Headers" component={Headers} />
+                        <Stack.Screen name="lists" component={ListScreen} />
+                        <Stack.Screen name="Pricings" component={Pricings} />
+                        <Stack.Screen name="DividerElements" component={DividerElements} />
+                        <Stack.Screen name="Snackbars" component={Snackbars} />
+                        <Stack.Screen name="Socials" component={Socials} />
+                        <Stack.Screen name="Swipeable" component={SwipeableScreen} />
+                        <Stack.Screen name="Tabs" component={Tabs} />
+                        <Stack.Screen name="Tables" component={Tables} />
+                        <Stack.Screen name="Toggles" component={Toggles} />
+                        <Stack.Screen name="Inputs" component={Inputs} />
+                        <Stack.Screen name="Footers" component={Footers} />
+                        <Stack.Screen name="TabStyle1" component={TabStyle1} />
+                        <Stack.Screen name="TabStyle2" component={TabStyle2} />
+                        <Stack.Screen name="TabStyle3" component={TabStyle3} />
+                        <Stack.Screen name="TabStyle4" component={TabStyle4} />
+                        <Stack.Screen name="Apibind" component={Apibind} />
+                        <Stack.Screen name="Apimnd" component={Apimnd} />
+                    </>
+                )}
             </Stack.Navigator>
         </View>
-    )
-}
+    );
+};
 
 export default StackNavigator;
