@@ -60,7 +60,7 @@ const tableData = [
 ]
 
 const shareAndOpen = async () => {
-    const sharedLink = 'https://example.com'; // Replace with your actual link
+    const sharedLink = ''; // Replace with your actual link
 
     try {
         const result = await Share.share({
