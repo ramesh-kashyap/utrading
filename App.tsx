@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Platform, SafeAreaView } from 'react-native';
 import Route from './app/navigation/Route';
 import { useFonts } from 'expo-font';
+import { AuthProvider } from './app/Helper/AuthContext'; 
 
 const App = () =>{
 
@@ -21,6 +22,7 @@ const App = () =>{
 		}
 
     return (
+      <AuthProvider> 
         <SafeAreaProvider>
           <SafeAreaView
             style={{
@@ -31,6 +33,7 @@ const App = () =>{
               <Route/>
           </SafeAreaView>
         </SafeAreaProvider>
+        </AuthProvider>
     );
 };
 

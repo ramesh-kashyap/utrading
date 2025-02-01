@@ -25,7 +25,8 @@ import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from "expo-web-browser";
-
+import { CommonActions } from '@react-navigation/native';
+import { useAuth } from '../../Helper/AuthContext';
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
@@ -51,6 +52,7 @@ const socialLink = [
 const GOOGLE_CLIENT_ID = '990050944679-nm8b6jrg7rsth4ho0844jl2ifl0o2ejk.apps.googleusercontent.com';
 const Login = () => {
     const navigation = useNavigation();
+    const { isAuthenticated , login } = useAuth();
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const [passwordType, setPasswordType] = useState(true); // true for hidden, false for visible
@@ -75,14 +77,24 @@ const Login = () => {
         if (response.data.status) {
           Alert.alert("Error", response.data.message);
         } else {
-          await AsyncStorage.setItem("authToken", response.data.token);
+         
           console.log("authToken", response.data.token);
-          navigation.navigate('DrawerNavigation',{screen : 'Home'}); // Redirect to the Home screen
+          await login(response.data.token);
+          //navigation.navigate('DrawerNavigation',{screen : 'Home'}); // Redirect to the Home screen
+          console.log("isAuthenticated", isAuthenticated);
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: 'DrawerNavigation' }],
+            })
+          );
         }
       } catch (error) {
         console.log("check", error);
         console.error("Error during login:", error.response || error.message || error);
-        Alert.alert("Error", "An error occurred during the login process.");
+        const errorMessage =
+        error.response?.data?.errors?.[0]?.msg || 'Invalid credentials';
+        Alert.alert("Error", errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -101,34 +113,34 @@ const Login = () => {
   
     const [userInfo, setUserInfo] = useState(null);
 
-    const redirectUri = AuthSession.makeRedirectUri({
-        scheme: "cryptocraft", // Use your app's scheme (same as in app.json)
-        useProxy: false,       // Disable proxy for standalone builds
-      });
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: '990050944679-nm8b6jrg7rsth4ho0844jl2ifl0o2ejk.apps.googleusercontent.com',
-    redirectUri: redirectUri,
-  });
+//     const redirectUri = AuthSession.makeRedirectUri({
+//         scheme: "cryptocraft", // Use your app's scheme (same as in app.json)
+//         useProxy: false,       // Disable proxy for standalone builds
+//       });
+//   const [request, response, promptAsync] = Google.useAuthRequest({
+//     androidClientId: '990050944679-nm8b6jrg7rsth4ho0844jl2ifl0o2ejk.apps.googleusercontent.com',
+//     redirectUri: redirectUri,
+//   });
 
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { authentication } = response;
-      fetchUserInfo(authentication.accessToken);
-    }
-  }, [response]);
+//   useEffect(() => {
+//     if (response?.type === 'success') {
+//       const { authentication } = response;
+//       fetchUserInfo(authentication.accessToken);
+//     }
+//   }, [response]);
 
-  const fetchUserInfo = async (accessToken) => {
-    try {
-      const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      const userInfo = await userInfoResponse.json();
-      setUserInfo(userInfo);
-      Alert.alert('Login Success', JSON.stringify(userInfo));
-    } catch (error) {
-      console.error('Error fetching user info:', error);
-    }
-  };
+//   const fetchUserInfo = async (accessToken) => {
+//     try {
+//       const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+//         headers: { Authorization: `Bearer ${accessToken}` },
+//       });
+//       const userInfo = await userInfoResponse.json();
+//       setUserInfo(userInfo);
+//       Alert.alert('Login Success', JSON.stringify(userInfo));
+//     } catch (error) {
+//       console.error('Error fetching user info:', error);
+//     }
+//   };
 
   const handlePhoneChange = (number: string) => {
     setPhone(number);
