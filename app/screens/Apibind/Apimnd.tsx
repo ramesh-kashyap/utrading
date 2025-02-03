@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState,useEffect} from "react";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from '../../navigation/RootStackParamList';
 import {View, Text, SafeAreaView, ScrollView, Platform, TouchableOpacity,Alert} from "react-native";
@@ -12,16 +12,65 @@ import { Image } from "react-native";
 import * as Clipboard from 'expo-clipboard'; // Import Clipboard from expo-clipboard
 import {FontAwesome} from '@expo/vector-icons';
 import Button from '../../components/Button/Button';
+import { useRoute } from '@react-navigation/native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import Api from "../../../services/Api";
 type ApimndScreenProps = StackScreenProps<RootStackParamList, 'Register'>;
 const Apimnd =({ navigation }: ApimndScreenProps) =>{
-            
+    const route = useRoute();
+    const { name } = route.params; 
+    const [apiKey, setApiKey] = useState('');
+    const [secretKey, setSecretKey] = useState('');
     const [referralCode] = useState('ABCD1234'); // Example referral code
+    const [ip, setIp] = useState(null);
     const copyToClipboard = async () => {
-        await Clipboard.setStringAsync(referralCode); // Copy to clipboard
+        await Clipboard.setStringAsync(ip); // Copy to clipboard
         Alert.alert('Success', ' copied to clipboard!');
       };
+const handleSubmit = async()=>{
+    try {
 
+        const formData = {
+            apiKey,
+            apiSecret :secretKey,
+             remark: name,
+          };
+        // You can replace the following line with an actual API call (e.g., using axios or fetch)
+        console.log('Submitting data:', formData);
+        const response = await Api.post('/apiBind', formData); // Make API request
+        if(response.data.success){
+            console.log('Registration successful:', response.data);
+            Alert.alert('Success',response.data.message);
+        }else{
+            Alert.alert('Error',response.data.message);
+        }
+           
+    
+      } catch (error) {
+       
+        const errorMessage = error.response.data?.message || "Something went wrong.";
+        Alert.alert("Error", errorMessage);
+      }
+}
+
+const fetchIP = async () => {
+    try {
+      const response = await  Api.get('/Public-IP');
+      if (response.data.success) {
+        setIp(response.data.ip);
+        console.log(response.data.ip);
+      } else {
+        console.log('Error',response.data.message);
+      }
+    } catch (error) {
+        const errorMessage = error.response.data?.message || "Something went wrong.";
+        console.log("Error", errorMessage);
+    }
+  };
+
+  useEffect(() => {
+    fetchIP();
+  }, []);
             const {colors}: {colors : any} = useTheme();
     return(
         <SafeAreaView style={{flex:1,backgroundColor:colors.background}}>
@@ -32,7 +81,7 @@ const Apimnd =({ navigation }: ApimndScreenProps) =>{
             }}
         >
             <Header 
-                title={'Api Import'}  
+                title={name}  
                 leftIcon={'back'}
                 leftAction={() => navigation.navigate('Apibind')}
             />
@@ -48,23 +97,25 @@ const Apimnd =({ navigation }: ApimndScreenProps) =>{
                             
                             <View style={{marginBottom:10}}>
                                 <Input
-                                    value={''}  
-                                    placeholder="Api Key"
-                                    onChangeText={(value)=> console.log(value)}
+                                     
+                                    placeholder="Enter Api Key"
+                                    onChangeText={(text) => setApiKey(text)}
                                 />
                             </View>
                             <View style={{marginBottom:10}}>
                                 <Input
-                                    value={''}  
-                                    type={'password'}
-                                    placeholder="Secret Key"
-                                    onChangeText={(value)=> console.log(value)}
+                                    
+                                   
+                                    placeholder="Enter Secret Key"
+                                    onChangeText={(text) => setSecretKey(text)}
+                                   
                                 />
                             </View>
 
                             <View style={GlobalStyleSheet.loginBtnArea}>
                         <Button
                             title={'Import'}
+                            onPress={handleSubmit}
                         />
                         <View
                             style={{
@@ -73,7 +124,7 @@ const Apimnd =({ navigation }: ApimndScreenProps) =>{
                                 paddingVertical: 15,
                             }}
                         >
-                            <Text style={{ ...FONTS.font, color: colors.title }}>13.213.132.125 13.251.83.60 18.139.102.94 3.1.7.213 46.137.215.117..</Text>
+                            <Text style={{ ...FONTS.font, color: colors.title }}>{ip}</Text>
                             <TouchableOpacity
                                 // onPress={() => navigation.navigate('Apibind')}
                                 onPress={copyToClipboard}

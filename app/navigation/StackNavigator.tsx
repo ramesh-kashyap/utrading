@@ -78,13 +78,7 @@ const StackNavigator = () => {
                 {/* Render authenticated screens */}
                 {isAuthenticated && (
                     <>
-                        <Stack.Screen name="DrawerNavigation">
-                            {(props) => (
-                                <ProtectedRoute>
-                                    <DrawerNavigation {...props} />
-                                </ProtectedRoute>
-                            )}
-                        </Stack.Screen>
+                         <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} />
                         {/* Other authenticated screens */}
                         <Stack.Screen name="Settings" component={Settings} />
                         <Stack.Screen name="ChangePassword" component={ChangePassword} />

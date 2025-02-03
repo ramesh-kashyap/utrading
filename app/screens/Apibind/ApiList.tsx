@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useTheme,useRoute } from '@react-navigation/native';
 import { COLORS, FONTS, SIZES } from '../../constants/theme';
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from '../../navigation/RootStackParamList';
@@ -52,7 +52,7 @@ const ApiList = ({name, image, description, link} : Props) => {
                 <Text style={[FONTS.fontSm,FONTS.fontBaseMedium,{color:colors.text,lineHeight:18}]}>{name}</Text>
             </View>
             <View style={{alignItems:'flex-end'}}>
-            <TouchableOpacity onPress={() => navigation.navigate('Apimnd')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Apimnd',{ name: name })}>
                 <Text style={[FONTS.h6,FONTS.fontBaseSemiBold,{color:colors.title,marginBottom:2}]} >{description} </Text>
                 <Text style={[FONTS.fontXs,FONTS.fontBaseMedium,{color: parseInt(link) > 0 ? COLORS.success : COLORS.danger}]}>{link}</Text>
                 </TouchableOpacity>

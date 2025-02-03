@@ -10,9 +10,11 @@ type Props = {
     navigation : any;
     bottomSheetRef : any;
     setSheetType : any;
+    sbalance: number | null;
+    fbalance: number | null;
 }
 
-const WalletBalance = ({navigation, bottomSheetRef, setSheetType} : Props) => {
+const WalletBalance = ({navigation, bottomSheetRef, setSheetType,sbalance, fbalance} : Props) => {
     return (
         <LinearGradient
             start={{x: 1, y: 0.5}} end={{x: 0.5, y: 1.0}}
@@ -86,7 +88,7 @@ const WalletBalance = ({navigation, bottomSheetRef, setSheetType} : Props) => {
                     }}
                 >
                     <Text style={[FONTS.font,FONTS.fontMedium,{color:COLORS.primary,marginBottom:8}]}>Total Balance</Text>
-                    <Text style={[FONTS.h1,FONTS.fontBaseSemiBold,{color:COLORS.white,lineHeight:42,marginBottom:2}]}>$64,926</Text>
+                    <Text style={[FONTS.h1,FONTS.fontBaseSemiBold,{color:COLORS.white,lineHeight:42,marginBottom:2}]}>{(fbalance+sbalance).toFixed(2)}</Text>
                     <Text style={[FONTS.fontSm,{color:COLORS.darkText}]}>BTC: 1,99992.01</Text>
                 </View>
             </View>

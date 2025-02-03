@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { View, Text, SafeAreaView, ScrollView, Platform } from 'react-native';
+import React, { useCallback, useRef, useState ,useEffect} from 'react';
+import { View, Text, SafeAreaView, ScrollView, Platform, Alert } from 'react-native';
 import { CompositeScreenProps, useTheme } from '@react-navigation/native';
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from '../../navigation/RootStackParamList';
@@ -15,7 +15,7 @@ import WithdrawSheet from '../../components/BottomSheet/WithdrawSheet';
 import TransferSheet from '../../components/BottomSheet/TransferSheet';
 import DepositSheet from '../../components/BottomSheet/DepositSheet';
 import { Checkbox } from 'react-native-paper';
-
+import Api from "../../../services/Api";
 const walletData = [
     {
         image : IMAGES.bitcoin,
@@ -77,7 +77,9 @@ const WalletScreen = ({navigation} : WalletScreenProps) => {
     const theme = useTheme();
     const {colors} : {colors : any} = theme;
     const [toggleCheckBox , setToggleCheckBox] = useState<boolean>(false);
-
+    const [sbalance, setSbalance] = useState<number>(0);
+    const [fbalance, setFbalance] = useState<number>(0);
+    const [cardText, setCardtext] = useState<string>('');
     const [sheetType , setSheetType] = useState<string>('');
 
     const bottomSheetRef = useRef<any>(null);
@@ -99,6 +101,47 @@ const WalletScreen = ({navigation} : WalletScreenProps) => {
         []
     );
 
+    useEffect(() => {
+        // Example logic to fetch balance, you can replace it with real data fetching logic
+        // const fetchBalance = () => {
+        //     setSbalance(1234.56789); // This value can change dynamically
+        // };
+     
+        // fetchBalance(); // Set initial balance when the component mounts
+    
+        // Simulate balance change after 5 seconds (for demonstration purposes)
+        // const timer = setTimeout(() => {
+        //     setSbalance(response.data.usdtBalance.free); // New balance after 5 seconds (as string)
+        //   }, 5000);
+        //   return () => clearTimeout(timer);
+        const fetchAccountInfo = async () => {
+            try {
+               
+                const response = await Api.get(`/account-info`);
+              
+                if(response.data.success){setSbalance(response.data.usdtBalance.free); }else{
+                    console.log('Error',"Spot Balance Not Fetch");
+                }
+                    
+                
+                   
+                const response2 = await Api.get(`/future-account-info`);
+                console.log(response2.data.success);
+                if(response2.data.success){
+                    console.log('Future Account Info:', response2.data);
+                    setFbalance(response.data);
+                }else{
+                    console.log('Error',"Future Balance Not Fetch");
+                }
+                
+            } catch (error) {
+                
+                console.error("Error:",error);
+            }}
+            fetchAccountInfo();
+       // Cleanup the timeout
+      }, []);
+
     return (
         <SafeAreaView
             style={{
@@ -116,6 +159,8 @@ const WalletScreen = ({navigation} : WalletScreenProps) => {
                     navigation={navigation}
                     bottomSheetRef={bottomSheetRef}
                     setSheetType={setSheetType}
+                    sbalance={parseFloat(sbalance) || 0} 
+                    fbalance={parseFloat(fbalance) || 0}
                 />
                 <View style={GlobalStyleSheet.container}>
 
@@ -125,12 +170,16 @@ const WalletScreen = ({navigation} : WalletScreenProps) => {
                         <View style={GlobalStyleSheet.col50}>
                             <WalletCard
                                 color={theme.dark ? '#62F5E4' : '#0EB6A2'}
+                               
+                                balance={parseFloat(sbalance)} cardText={'Spot Trade'}
                             />
                         </View>
                         <View style={GlobalStyleSheet.col50}>
                             <WalletCard
                                 color={theme.dark ? '#E1E445' : '#BDC009'}
-                            />
+                               balance={parseFloat(fbalance) || 0} cardText={'Future Trade'}
+                               />
+                           
                         </View>
                     </View>
 

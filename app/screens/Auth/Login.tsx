@@ -80,14 +80,14 @@ const Login = () => {
          
           console.log("authToken", response.data.token);
           await login(response.data.token);
-          //navigation.navigate('DrawerNavigation',{screen : 'Home'}); // Redirect to the Home screen
+          navigation.navigate('DrawerNavigation',{screen : 'Home'}); // Redirect to the Home screen
           console.log("isAuthenticated", isAuthenticated);
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: 'DrawerNavigation' }],
-            })
-          );
+        //   navigation.dispatch(
+        //     CommonActions.reset({
+        //       index: 0,
+        //       routes: [{ name: 'DrawerNavigation' }],
+        //     })
+        //   );
         }
       } catch (error) {
         console.log("check", error);

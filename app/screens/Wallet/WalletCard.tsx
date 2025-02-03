@@ -10,9 +10,11 @@ const chartData = [20,40,35,50,25,60,50,70,60,75,30,50,43,75,70,75];
 
 type Props = {
     color ?: string;
+    balance: number; 
+    cardText : string;
 }
 
-const WalletCard = ({color} : Props) => {
+const WalletCard = ({color, balance, cardText} : Props) => {
 
     const {colors} : {colors : any} = useTheme();
 
@@ -39,8 +41,8 @@ const WalletCard = ({color} : Props) => {
                     tintColor : color ? color : COLORS.primary,
                 }}
             />
-            <Text style={[FONTS.fontSm,{color:colors.title,marginBottom:3}]}>Spot Balance</Text>
-            <Text style={[FONTS.fontLg,FONTS.fontBaseSemiBold,{color:colors.title}]}>0.123456 USD</Text>
+            <Text style={[FONTS.fontSm,{color:colors.title,marginBottom:3}]}>{cardText}</Text>
+            <Text style={[FONTS.fontLg,FONTS.fontBaseSemiBold,{color:colors.title}]}>{balance.toFixed(2)} USD</Text>
 
             <View style={{marginLeft:-16,marginTop:18,overflow:'hidden',marginRight:-15}}>
                 <View style={{marginBottom:-1}}>
