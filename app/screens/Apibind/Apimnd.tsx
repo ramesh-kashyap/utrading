@@ -33,7 +33,7 @@ const handleSubmit = async()=>{
         const formData = {
             apiKey,
             apiSecret :secretKey,
-             remark: name,
+            remark: name,
           };
         // You can replace the following line with an actual API call (e.g., using axios or fetch)
         console.log('Submitting data:', formData);

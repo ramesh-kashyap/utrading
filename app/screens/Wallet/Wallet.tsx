@@ -101,45 +101,38 @@ const WalletScreen = ({navigation} : WalletScreenProps) => {
         []
     );
 
-    useEffect(() => {
-        // Example logic to fetch balance, you can replace it with real data fetching logic
-        // const fetchBalance = () => {
-        //     setSbalance(1234.56789); // This value can change dynamically
-        // };
-     
-        // fetchBalance(); // Set initial balance when the component mounts
+    const fetchSpotBalance = async () => {
+        try {
+          const response = await Api.get(`/account-info`);
+          if (response.data.success) {
+            setSbalance(response.data.usdtBalance.free); // Assuming response contains spot balance
+          } else {
+            console.log('Error: Spot Balance not fetched');
+          }
+        } catch (error) {
+          console.error('Error fetching spot balance:', error);
+        }
+      };
     
-        // Simulate balance change after 5 seconds (for demonstration purposes)
-        // const timer = setTimeout(() => {
-        //     setSbalance(response.data.usdtBalance.free); // New balance after 5 seconds (as string)
-        //   }, 5000);
-        //   return () => clearTimeout(timer);
-        const fetchAccountInfo = async () => {
-            try {
-               
-                const response = await Api.get(`/account-info`);
-              
-                if(response.data.success){setSbalance(response.data.usdtBalance.free); }else{
-                    console.log('Error',"Spot Balance Not Fetch");
-                }
-                    
-                
-                   
-                const response2 = await Api.get(`/future-account-info`);
-                console.log(response2.data.success);
-                if(response2.data.success){
-                    console.log('Future Account Info:', response2.data);
-                    setFbalance(response.data);
-                }else{
-                    console.log('Error',"Future Balance Not Fetch");
-                }
-                
-            } catch (error) {
-                
-                console.error("Error:",error);
-            }}
-            fetchAccountInfo();
-       // Cleanup the timeout
+      // Fetch Future Balance
+      const fetchFutureBalance = async () => {
+        try {
+          const response = await Api.get(`/future-account-info`);
+          console.log(response.data.tradingData.balance);
+          if (response.data.success) {
+            setFbalance(response.data.tradingData.balance); // Assuming response contains future balance
+          } else {
+            console.log('Error: Future Balance not fetched');
+          }
+        } catch (error) {
+          console.error('Error fetching future balance:', error);
+        }
+      };
+    
+      // useEffect to trigger both functions when component mounts
+      useEffect(() => {
+        fetchSpotBalance(); // Fetch Spot Balance
+        fetchFutureBalance(); // Fetch Future Balance
       }, []);
 
     return (
