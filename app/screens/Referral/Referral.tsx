@@ -10,7 +10,8 @@ import { COLORS, SIZES, FONTS } from '../../constants/theme';
 import { IMAGES } from '../../constants/Images';
 import Input from '../../components/Input/Input';
 import * as Linking from 'expo-linking'
-
+import { useEffect , useState} from 'react';
+import Api from "../../../services/Api";
 const socialLink = [
     {
         icon : IMAGES.facebook,
@@ -59,27 +60,7 @@ const tableData = [
     },
 ]
 
-const shareAndOpen = async () => {
-    const sharedLink = ''; // Replace with your actual link
 
-    try {
-        const result = await Share.share({
-            message: `Check this out! ${sharedLink}`,
-            url: sharedLink, // URL to share
-        });
-
-        // If the user successfully shares, open the link
-        if (result.action === Share.sharedAction) {
-            setTimeout(() => {
-                Linking.openURL(sharedLink).catch((err) =>
-                    Alert.alert('Error', 'Could not open the link')
-                );
-            }, 2000); // Small delay to ensure sharing completes
-        }
-    } catch (error) {
-        console.log('Error sharing:', error);
-    }
-};
 
 
 type ReferralScreenProps = CompositeScreenProps<
@@ -89,7 +70,56 @@ type ReferralScreenProps = CompositeScreenProps<
 
 const ReferralScreen = ({navigation} : ReferralScreenProps) => {
 
+    const shareAndOpen = async () => {
+        const sharedLink = 'APK link'; // Replace with your actual link
+    
+        try {
+            const result = await Share.share({
+                message: `This is reffrail code! ${reffrial}`,
+                // url: sharedLink, // URL to share
+            });
+    
+            // If the user successfully shares, open the link
+            if (result.action === Share.sharedAction) {
+                setTimeout(() => {
+                    Linking.openURL(sharedLink).catch((err) =>
+                        Alert.alert('Success', 'Code Send')
+                    );
+                }, 2000); // Small delay to ensure sharing completes
+            }
+        } catch (error) {
+            console.log('Error sharing:', error);
+        }
+    };
+
     const {colors} : {colors : any} = useTheme();
+    const [loading, setLoading] = useState(false);
+    const [reffrial, setReffrial] =useState();
+
+
+    const getReffrial = async () => {
+        setLoading(true);
+        try {
+            const response = await Api.get("/getreffrial");
+            if (response.data) {
+                setReffrial(response.data.username[0].referral_code);
+                // console.log(response.data.username[0].referral_code);
+            } else {
+                setReffrial(response.data);
+                console.error(response.data,"error");
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+        finally {
+            setLoading(false); // Ensure UI updates after fetching
+        }
+    };
+    
+    
+       useEffect(()=>{
+        getReffrial();
+       },[]);
 
     return (
         <SafeAreaView>
@@ -118,7 +148,7 @@ const ReferralScreen = ({navigation} : ReferralScreenProps) => {
                             <Text style={{...FONTS.fontXs,color:COLORS.primaryText,marginBottom:6}}>Referral ID</Text>
                             <View>
                                 <Input
-                                    defaultValue='AZ19ZGSH'
+                                    defaultValue={reffrial}
                                 />
                                 <TouchableOpacity
                                     style={{

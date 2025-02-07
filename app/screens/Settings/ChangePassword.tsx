@@ -17,34 +17,44 @@ const ChangePassword = () => {
 // console.log("New Password:", newPassword);
 // console.log("Confirm Password:", confirmPassword);
 
-        if(!currentPassword || !newPassword || !confirmPassword){
-            Alert.alert("Error", "All fields are required.");
-            return;
-        }
-        if(newPassword !==confirmPassword){
-            Alert.alert("Error", "New Password and Confirm password Not match!");
-            return;
-        }
-
         try{
              const response = await Api.post("/change-password",{
                 currentPassword: currentPassword,
                 newPassword: newPassword,
+                confirmPassword :confirmPassword,
              })   
              console.log(response.data);
              if(response.data.success){
-              Alert.alert("Success","Password Updated Sucessfully");
+              Alert.alert("Success",response.data.success);
               setCurrentPassword("");
               setNewPassword("");
               setConfirmPassword("");
              } 
              else{
-                Alert.alert("Error","Something went wrong.");
+                Alert.alert("Error",response.data.message);
              }         
         }
-        catch(error){
-           console.error("Error :",error)
+        catch (error: any) {
+            console.error("Error:", error);
+        
+            // Check if it's an Axios error
+            if (error.response) {
+                const errorMessage = 
+                    error.response.data && 
+                    error.response.data.errors && 
+                    error.response.data.errors[0] && 
+                    error.response.data.errors[0].msg 
+                    ? error.response.data.errors[0].msg 
+                    : (error.response.data && error.response.data.message ? error.response.data.message : "An unknown error occurred. Please try again.");
+                
+                Alert.alert("Error", errorMessage);
+            } else if (error.request) {
+                Alert.alert("Error", "No response from server. Please try again later.");
+            } else {
+                Alert.alert("Error", "An unexpected error occurred.");
+            }
         }
+        
 
     }
 

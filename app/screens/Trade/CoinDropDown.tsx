@@ -26,6 +26,7 @@ const CoinDropDown = ({colors} : Props) => {
             style={{
                 marginHorizontal:-8,
                 marginTop:-8,
+                marginBottom:20,
             }}
         >
             <TouchableOpacity
@@ -73,6 +74,16 @@ const CoinDropDown = ({colors} : Props) => {
                     ]}>{coinData.name}</Text>
                     <Text style={[FONTS.fontXs,FONTS.fontBaseMedium,{color:colors.text}]}>{coinData.tag}</Text>
                 </View>
+                <View style={{flex:1}}>
+                    {/* <Text style={[
+                        FONTS.h6,FONTS.fontSemiBold,{
+                            color:colors.title,
+                            marginBottom:6,
+                            marginTop:-2,
+                        }
+                    ]}>{coinData.name}</Text> */}
+                    <Text style={[FONTS.fontXs,FONTS.fontBaseMedium,{color:colors.text}]}>{coinData.amount}</Text>
+                </View>
                 <View
                     style={{
                         marginRight:12,
@@ -90,14 +101,14 @@ const CoinDropDown = ({colors} : Props) => {
                         }
                     ]}>{coinData.rate}%</Text>
                 </View>
-                <Feather  size={22} color={colors.text} name='chevron-down'/>
+                <Feather  size={22} color={colors.text} name='pause-circle'/>
             </TouchableOpacity>
 
-            <CoinSheet
+            {/* <CoinSheet
                 modal={modalShow}
                 setModal={setModal}
                 setCoinData={setCoinData}
-            />
+            /> */}
         </View>
     )
 }

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image, Linking } from 'react-native';
 import { CompositeScreenProps, useTheme } from '@react-navigation/native';
 import { StackScreenProps } from "@react-navigation/stack";
 import {Feather}  from '@expo/vector-icons';
@@ -13,6 +13,10 @@ import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom
 import { IMAGES } from '../../constants/Images';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CommonActions, useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import '../locales/i18n';
+// const { t } = useTranslation();
+
 const menuData = [
     {
         icon : IMAGES.verification,
@@ -27,7 +31,6 @@ const menuData = [
     {
         icon : IMAGES.support,
         title : "Support",
-        navigate : 'Support',
     },
     {
         icon : IMAGES.history,
@@ -87,10 +90,16 @@ type ProfileScreenProps = CompositeScreenProps<
     >;
 
 const ProfileScreen = ({navigation} : ProfileScreenProps) => {
-    
-    const {colors} : {colors : any} = useTheme();
+   
 
+    const handleSupportPress = () => {
+        const url = "https://t.me/nodetraders";
+        Linking.openURL(url).catch(err => console.error("Failed to open URL:", err));
+    };
+    const {colors} : {colors : any} = useTheme();
+    // const { t, i18n } = useTranslation();
     const [language , setLanguage] = useState<any>('English');
+    // const [language , setLanguage] = useState(i18n.language);
 
     const bottomSheetRef = useRef<any>(null);
     const snapPoints = useMemo(() => ['60%'], []);
@@ -229,7 +238,11 @@ const ProfileScreen = ({navigation} : ProfileScreenProps) => {
                                         bottomSheetRef.current.snapToIndex(0);  // Open the language bottom sheet
                                     } else if (data.title === "Log out") {
                                         handleLogout();  // Call the handleLogout function when "Log out" is clicked
-                                    } else {
+                                    }
+                                    else if(data.title === "Support"){
+                                        handleSupportPress();
+                                    }
+                                    else {
                                         data.navigate && navigation.navigate(data.navigate);  // Navigate to other screens
                                     }
                                 }}

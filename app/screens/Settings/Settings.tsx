@@ -1,5 +1,5 @@
 import React, {useCallback, useRef, useState} from 'react';
-import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import {Feather}  from '@expo/vector-icons';
 import Header from '../../layout/Header';
@@ -11,6 +11,11 @@ import BottomSheet, { BottomSheetBackdrop, BottomSheetTextInput, BottomSheetView
 import { RootStackParamList } from '../../navigation/RootStackParamList';
 import Button from '../../components/Button/Button';
 import ThemeBtn from '../../components/ThemeBtn';
+import Api from "../../../services/Api";
+
+
+
+
 
 const menuData = [
     {
@@ -40,9 +45,55 @@ const menuData = [
     },
 ]
 
+
 type SettingsScreenProps = StackScreenProps<RootStackParamList, 'Settings'>;
 
 const Settings = ({navigation} : SettingsScreenProps) => {
+
+    const [changeMail , setChangeMail] = useState("");
+    const [changePhone, setChangePhone] = useState("");
+
+    const handleChange = async () => {
+        try {
+            let endpoint = sheetType === 'email' ? "/change-mail" : "/change-phone";
+            let payload = sheetType === 'email' 
+                ? { changeMail: changeMail } 
+                : { changePhone: changePhone };
+    
+            const response = await Api.post(endpoint, payload);
+    
+            console.log(response.data);
+    
+            // Ensure response.data.message is a string before using it
+            const successMessage = typeof response.data.success === 'string' ? response.data.success : "Operation successful.";
+            const errorMessage = typeof response.data.message === 'string' ? response.data.message : "An error occurred.";
+    
+            if (response.data.success) {
+                Alert.alert("Success", successMessage);
+                sheetType === 'email' ? setChangeMail("") : setChangePhone("");
+            } else {
+                Alert.alert("Error", errorMessage);
+            }
+        } catch (error: any) {
+            console.error("Error:", error);
+    
+            let errorMessage = "An unknown error occurred. Please try again.";
+    
+            if (error.response) {
+                if (typeof error.response.data?.message === 'string') {
+                    errorMessage = error.response.data.message;
+                } else if (Array.isArray(error.response.data?.errors) && error.response.data.errors.length > 0) {
+                    errorMessage = error.response.data.errors[0]?.msg || errorMessage;
+                }
+            } else if (error.request) {
+                errorMessage = "No response from server. Please try again later.";
+            }
+    
+            Alert.alert("Error", errorMessage);
+        }
+    };
+    
+    
 
     const {colors} : {colors : any} = useTheme();
     const [sheetType , setSheetType] = useState<string>('email');
@@ -82,13 +133,17 @@ const Settings = ({navigation} : SettingsScreenProps) => {
                         return(
                             <TouchableOpacity
                                 key={index}
-                                onPress={() => 
-                                    {
-                                        data.navigate ? navigation.navigate(data.navigate) :
-                                        data.sheet === 'email' ? (setSheetType('email'), bottomSheetRef.current.snapToIndex(0)) :
-                                        data.sheet === 'phone' ? (setSheetType('phone'), bottomSheetRef.current.snapToIndex(0)) : ""
+                                onPress={() => {
+                                    if (data.navigate) {
+                                        navigation.navigate(data.navigate);
+                                    } else if (data.sheet === 'email' || data.sheet === 'phone') {
+                                        setSheetType(data.sheet);
+                                        bottomSheetRef.current?.snapToIndex(0);
                                     }
-                                }
+                                }}
+                                
+                                
+                                
                                 style={{
                                     marginBottom:8,
                                     flexDirection:'row',
@@ -163,6 +218,8 @@ const Settings = ({navigation} : SettingsScreenProps) => {
                                         backgroundColor : colors.input,
                                         borderColor:colors.border,
                                     }]}
+                                    value={changeMail}
+                                    onChangeText={setChangeMail}
                                     placeholder='Type your email'
                                     placeholderTextColor={colors.text}
                                 />
@@ -177,6 +234,8 @@ const Settings = ({navigation} : SettingsScreenProps) => {
                                         backgroundColor : colors.input,
                                         borderColor:colors.border,
                                     }]}
+                                    value={changePhone}
+                                    onChangeText={setChangePhone}
                                     placeholder='Type your number'
                                     placeholderTextColor={colors.text}
                                 />
@@ -193,7 +252,7 @@ const Settings = ({navigation} : SettingsScreenProps) => {
                         }}
                     >
                         <Button
-                            onPress={() => {}}
+                            onPress={handleChange}
                             title={'Submit'}
                         />
                     </View>
