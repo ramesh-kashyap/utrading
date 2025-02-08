@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, StyleSheet,Alert } from 'react-native';
 import { CompositeScreenProps, useTheme } from '@react-navigation/native';
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from '../../navigation/RootStackParamList';
@@ -31,6 +31,7 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
     const [activeTab , setActiveTab] = useState<string>('buy');
     const [activeTab2 , setActive2Tab] = useState<string>('Limit');
     const [activeSpot, setActiveSpot] =useState('spot');
+    const [isPaused, setIsPaused] = useState(false);
     const [coinData , setCoinData] = useState<any>({
             image : IMAGES.bitcoin,
             name : 'Spot',
@@ -42,7 +43,24 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
         const toggleSpot = () => {
             setActiveSpot(prev => (prev === 'spot' ? 'future' : 'spot'));
           };
-
+          const pausePlay = () => {
+            console.log('hieihei');
+            Alert.alert(
+              'Confirmation',
+              `Are you sure you want to ${isPaused ? 'resume' : 'pause'}?`,
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => setIsPaused(!isPaused),
+                },
+              ],
+              { cancelable: false }
+            );
+          };
 
     return (
         <SafeAreaView
@@ -148,8 +166,9 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
                         }
                     ]}>{coinData.rate}%</Text>
                 </View>
-                <Feather  size={22} color={colors.text} onPress={toggleSpot} name='chevron-right'/>
+                <Feather  size={22} color={colors.text} onPress={pausePlay}  name={isPaused ? 'play-circle' : 'pause-circle'}/>
             </TouchableOpacity>
+            
 
             {/* <CoinSheet
                 modal={modalShow}
@@ -248,7 +267,7 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
             activeTab === "Trade History" ?
                 <TradeHistory colors={colors}/>
                 :
-                <></>
+                <OpenOrder colors={colors}/>
             }
                     
                 </View>

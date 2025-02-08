@@ -12,7 +12,10 @@ import { BottomTabParamList } from '../../navigation/BottomTabParamList';
 import Header from '../../layout/Header';
 import { COLORS, SIZES, FONTS } from '../../constants/theme';
 import { useNavigation } from "@react-navigation/native";
-type ApibindProps = StackScreenProps<RootStackParamList, "Apibind">;
+type ApibindProps = CompositeScreenProps<
+StackScreenProps<RootStackParamList, 'Apibind'>,
+StackScreenProps<BottomTabParamList>
+>;
 
 const exchanges = [
     {
@@ -87,9 +90,10 @@ const Apibind: React.FC<ApibindProps> = ({ navigation }) =>{
             }}
         >
             <Header
-                title='ApiBind'
+                title='API Bind'
                 leftIcon='back'
-                // leftAction={() => navigation.navigate('')}
+                leftAction={() => navigation.navigate('Home')}
+
             />
             <ScrollView>
                 <View style={GlobalStyleSheet.container}>
