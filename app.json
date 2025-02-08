@@ -48,6 +48,9 @@
       "googleClientId": "990050944679-nm8b6jrg7rsth4ho0844jl2ifl0o2ejk.apps.googleusercontent.com",
       "redirectUri": "cryptocraft://auth"
     },
-    "owner": "maticdefi036"
+    "owner": "maticdefi036",
+    "plugins": [
+      "expo-localization"
+    ]
   }
 }
