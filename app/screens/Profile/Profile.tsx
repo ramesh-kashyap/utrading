@@ -13,8 +13,8 @@ import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom
 import { IMAGES } from '../../constants/Images';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CommonActions, useNavigation } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
-import '../locales/i18n';
+// import { useTranslation } from 'react-i18next';
+// import '../locales/i18n';
 // const { t } = useTranslation();
 
 const menuData = [
