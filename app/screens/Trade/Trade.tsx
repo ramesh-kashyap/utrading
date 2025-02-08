@@ -15,6 +15,9 @@ import MarketOrder from './MarketOrder';
 import Button from '../../components/Button/Button';
 import OrderTabs from './OrderTabs';
 import OrderBook from './OrderBook';
+import OpenOrder from './OpenOrder';
+import TradeHistory from './TradeHistory';
+import {Feather}  from '@expo/vector-icons';
 
 type TradeScreenProps = CompositeScreenProps<
     StackScreenProps<BottomTabParamList, 'Trade'>,
@@ -24,9 +27,21 @@ type TradeScreenProps = CompositeScreenProps<
 const TradeScreen = ({navigation} : TradeScreenProps) => {
     
     const {colors} : {colors : any} = useTheme();
-
+     const [modalShow , setModal] = useState<boolean>(false);
     const [activeTab , setActiveTab] = useState<string>('buy');
     const [activeTab2 , setActive2Tab] = useState<string>('Limit');
+    const [activeSpot, setActiveSpot] =useState('spot');
+    const [coinData , setCoinData] = useState<any>({
+            image : IMAGES.bitcoin,
+            name : 'Spot',
+            tag : 'BTC',
+            balance : '$8,456.87',
+            amount : '0.154836',
+            rate : '+4.2',
+        });
+        const toggleSpot = () => {
+            setActiveSpot(prev => (prev === 'spot' ? 'future' : 'spot'));
+          };
 
 
     return (
@@ -51,9 +66,98 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
             />
             <ScrollView>
                 <View style={GlobalStyleSheet.container}>
-                    <CoinDropDown colors={colors}/>
-
+                    {/* <CoinDropDown colors={colors}/> */}
                     <View
+            style={{
+                marginHorizontal:-8,
+                marginTop:-8,
+                marginBottom:20,
+            }}
+        >
+            <TouchableOpacity
+                onPress={() => setModal(true)}
+                activeOpacity={.8}
+                style={{
+                    borderRadius:SIZES.radius,
+                    flexDirection:'row',
+                    backgroundColor:colors.input,
+                    borderWidth:1,
+                    borderColor:colors.border,
+                    alignItems:'center',
+                    paddingHorizontal:12,
+                    paddingVertical:8,
+                }}
+            >
+                <View
+                    style={{
+                        height:40,
+                        width:40,
+                        borderRadius:20,
+                        backgroundColor:colors.card,
+                        alignItems:'center',
+                        justifyContent:'center',
+                        marginRight:10,
+                    }}
+                    
+                >
+                    <Image
+                        style={{
+                            height:20,
+                            width:20,
+                            resizeMode:'contain',
+                            tintColor:colors.title,
+                        }}
+                        source={IMAGES.bitcoin}
+                    />
+                </View>
+                <View style={{flex:1}}>
+                    <Text onPress={toggleSpot}
+                    style={[
+                        FONTS.h6,FONTS.fontSemiBold,{
+                            color:colors.title,
+                            marginBottom:6,
+                            marginTop:-2,
+                        }
+                        
+                    ]}>{activeSpot}</Text>
+                    {/* <Text style={[FONTS.fontXs,FONTS.fontBaseMedium,{color:colors.text}]}>{coinData.tag}</Text> */}
+                </View>
+                <View style={{flex:1}}>
+                    {/* <Text style={[
+                        FONTS.h6,FONTS.fontSemiBold,{
+                            color:colors.title,
+                            marginBottom:6,
+                            marginTop:-2,
+                        }
+                    ]}>{coinData.name}</Text> */}
+                </View>
+                <View
+                    style={{
+                        marginRight:12,
+                        alignItems:'flex-end',
+                    }}
+                >
+                    <Text onPress={toggleSpot} style={[
+                        FONTS.h6,FONTS.fontBaseSemiBold,{
+                            color:colors.title,
+                        }
+                    ]}>{coinData.balance}</Text>
+                    <Text style={[
+                        FONTS.fontXs,{
+                            color:coinData.rate > 0 ? COLORS.success : COLORS.danger,
+                        }
+                    ]}>{coinData.rate}%</Text>
+                </View>
+                <Feather  size={22} color={colors.text} onPress={toggleSpot} name='chevron-right'/>
+            </TouchableOpacity>
+
+            {/* <CoinSheet
+                modal={modalShow}
+                setModal={setModal}
+                setCoinData={setCoinData}
+            /> */}
+        </View>
+                    {/* <View
                         style={[styles.tabRow,{
                             backgroundColor:colors.card,
                         }]}
@@ -78,8 +182,8 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
                         >
                             <Text style={[FONTS.h6,FONTS.fontSemiBold,{color:colors.title,lineHeight:18},activeTab === 'sell' && {color:COLORS.white}]}>Sell</Text>
                         </TouchableOpacity>
-                    </View>
-                    <View style={{marginBottom:15}}>
+                    </View> */}
+                    {/* <View style={{marginBottom:15}}>
                         <TabStyle1 
                             size={'sm'}
                             color={'#fff'}
@@ -89,10 +193,10 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
                             activeIndex={1}
                             colors={colors}
                         />
-                    </View>
+                    </View> */}
 
                     
-                    {activeTab2 === 'Limit' ?
+                    {/* {activeTab2 === 'Limit' ?
                         <LimitOrder
                             colors={colors}
                         />
@@ -124,13 +228,28 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
                             :
                             <></>
                         }
-                    </View>
+                    </View> */}
                     
-                    <OrderBook colors={colors}/>
+                    {/* <OrderBook colors={colors}/> */}
 
-                    <OrderTabs
+                    {/* <OrderTabs
                         colors={colors}
-                    />
+                    /> */}
+                    <TabStyle1
+                tabMenu={['Open Orders','Trade History']}
+                setActiveTab={setActiveTab}
+                activeTab={activeTab}
+                colors={colors}
+            />
+
+            {activeTab === "Open Orders" ?
+                <OpenOrder colors={colors}/>
+                :
+            activeTab === "Trade History" ?
+                <TradeHistory colors={colors}/>
+                :
+                <></>
+            }
                     
                 </View>
             </ScrollView>
