@@ -13,7 +13,7 @@ import TabStyle1 from '../../components/Tabs/TabStyle1';
 import TopGainers from './TopGainers';
 import TopLosers from './TopLosers';
 import { IMAGES } from '../../constants/Images';
-
+import { useTranslation } from 'react-i18next';
 type HomeScreenProps = CompositeScreenProps<
     StackScreenProps<BottomTabParamList, 'Home'>,
     StackScreenProps<RootStackParamList>
@@ -21,7 +21,7 @@ type HomeScreenProps = CompositeScreenProps<
 
 
 const HomeScreen = ({navigation} : HomeScreenProps) => {
-
+const { t, i18n } = useTranslation();
     const {colors} : {colors : any} = useTheme();
 
     const [activeTab , setActiveTab] = useState<any>('Top Gainers');
@@ -56,7 +56,7 @@ const HomeScreen = ({navigation} : HomeScreenProps) => {
                         }}
                     >
                         <View style={{flex:1}}>
-                            <Text style={[FONTS.font,{color:colors.text,marginBottom:10}]}>Total Balance</Text>
+                            <Text style={[FONTS.font,{color:colors.text,marginBottom:10}]}>{t('totalBalance')}</Text>
                             <Text style={[FONTS.h1,FONTS.fontBaseSemiBold,{color:colors.title,lineHeight:40}]}>$25,150.20</Text>
                         </View>
                         <View
@@ -76,10 +76,10 @@ const HomeScreen = ({navigation} : HomeScreenProps) => {
                     
                     <InfoCard colors={colors}/>
                     
-                    <Text style={[FONTS.font,FONTS.fontSemiBold,{color:colors.title,marginBottom:12}]}>24h Markets</Text>
+                    <Text style={[FONTS.font,FONTS.fontSemiBold,{color:colors.title,marginBottom:12}]}>{t('Markets')}</Text>
 
                     <TabStyle1
-                        tabMenu={['Top Gainers','Top Losers']}
+                        tabMenu={[t('topGainers'), t('topLosers')]}
                         setActiveTab={setActiveTab}
                         activeTab={activeTab}
                         colors={colors}

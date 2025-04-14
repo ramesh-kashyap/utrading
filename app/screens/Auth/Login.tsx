@@ -7,7 +7,7 @@ import {View, Text,
     Platform,
     TouchableOpacity
 } from 'react-native';
-import * as AuthSession from 'expo-auth-session';
+
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from '../../navigation/RootStackParamList';
 import { useTheme, useNavigation } from '@react-navigation/native';
@@ -28,6 +28,8 @@ import * as WebBrowser from "expo-web-browser";
 import { CommonActions } from '@react-navigation/native';
 import { useAuth } from '../../Helper/AuthContext';
 import { useGoogleLogin } from "@react-oauth/google";
+import * as AuthSession from 'expo-auth-session';
+import { useTranslation } from 'react-i18next'; 
 import axios from "axios";
 
 
@@ -52,6 +54,7 @@ const socialLink = [
 const GOOGLE_CLIENT_ID = '990050944679-nm8b6jrg7rsth4ho0844jl2ifl0o2ejk.apps.googleusercontent.com';
 const Login = () => {
     const navigation = useNavigation();
+    const { t, i18n } = useTranslation(); 
     const { isAuthenticated , login } = useAuth();
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
@@ -112,7 +115,7 @@ const Login = () => {
    
   
     const [userInfo, setUserInfo] = useState(null);
-
+   
 //     const redirectUri = AuthSession.makeRedirectUri({
 //         scheme: "cryptocraft", // Use your app's scheme (same as in app.json)
 //         useProxy: false,       // Disable proxy for standalone builds
@@ -179,8 +182,8 @@ const Login = () => {
                                 marginBottom:20,
                             }}
                         >
-                            <Text style={[GlobalStyleSheet.loginTitle,{color:colors.title}]}>Login Account</Text>
-                            <Text style={[GlobalStyleSheet.loginDesc,{color:colors.text}]}>A crypto login is a secure authentication process that enables users to access</Text>
+                            <Text style={[GlobalStyleSheet.loginTitle,{color:colors.title}]}>{t('loginTitle')}</Text>
+                            <Text style={[GlobalStyleSheet.loginDesc,{color:colors.text}]}>{t('loginDesc')}</Text>
                         </View>
                         <View>                         
                                 <Input value = ""/>
@@ -194,7 +197,7 @@ const Login = () => {
                                     }}
                                     onPress={() => promptAsync()}
                                 >
-                                    <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>Login with Google</Text>
+                                    <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>{t('loginWithGoogle')}</Text>
                                     <Image
                                         style={{
                                             height:20,
@@ -205,7 +208,7 @@ const Login = () => {
                                 </TouchableOpacity>
                             </View>
                         <View style={GlobalStyleSheet.inputGroup}>
-                            <Text style={[GlobalStyleSheet.label,{color:colors.title,marginTop:20,}]}>Phone</Text>
+                            <Text style={[GlobalStyleSheet.label,{color:colors.title,marginTop:20,}]}>{t('phone')}</Text>
                             <PhoneInput
                                                            ref={phoneRef}
                                                            value={phone}
@@ -232,7 +235,7 @@ const Login = () => {
                                                        />
                         </View>
                         <View style={GlobalStyleSheet.inputGroup}>
-                            <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>Password</Text>
+                            <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>{t('password')}</Text>
                             <Input
                                 placeholder={'Type your password'}
                                 type={'password'}
@@ -250,7 +253,7 @@ const Login = () => {
                                     position:'relative',
                                 }}
                             >
-                                <Text style={GlobalStyleSheet.linkBtn}>Forgot Password</Text>
+                                <Text style={GlobalStyleSheet.linkBtn}>{t('forgotPassword')}</Text>
                                 <View style={GlobalStyleSheet.linkUnderLine}/>
                             </TouchableOpacity>
                         </View>
@@ -276,10 +279,10 @@ const Login = () => {
                                     position:'relative',
                                 }}
                             >
-                                <Text style={GlobalStyleSheet.linkBtn}>Register</Text>
+                                <Text style={GlobalStyleSheet.linkBtn}>{t('register')}</Text>
                                 <View style={GlobalStyleSheet.linkUnderLine}/>
                             </TouchableOpacity>
-                            <Text style={{...FONTS.font,color:colors.title}}> for free</Text>
+                            <Text style={{...FONTS.font,color:colors.title}}>{t('forFree')} </Text>
                         </View>
                     </View>
 

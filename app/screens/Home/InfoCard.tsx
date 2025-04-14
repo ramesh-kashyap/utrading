@@ -3,12 +3,13 @@ import { View, Text, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FONTS, SIZES } from '../../constants/theme';
 import { IMAGES } from '../../constants/Images';
-
+import { useTranslation } from 'react-i18next';
 type Props = {
     colors : any;
 }
 
 const InfoCard = ({colors} : Props) => {
+    const { t, i18n } = useTranslation();
     return (
         <View
             style={{
@@ -45,7 +46,7 @@ const InfoCard = ({colors} : Props) => {
                         }}
                     />
                 </View>
-                <Text style={[FONTS.fontXs,{color:colors.text,marginBottom:6}]}>Total Deposit</Text>
+                <Text style={[FONTS.fontXs,{color:colors.text,marginBottom:6}]}>{t('totalDeposit')}</Text>
                 <Text style={[FONTS.h5,FONTS.fontBaseSemiBold,{color:colors.title,lineHeight:24}]}>$15,150.25</Text>
             </View>
             <LinearGradient
@@ -81,7 +82,7 @@ const InfoCard = ({colors} : Props) => {
                         }}
                     />
                 </View>
-                <Text style={[FONTS.fontXs,{color:colors.text,marginBottom:6}]}>Profit & Loss</Text>
+                <Text style={[FONTS.fontXs,{color:colors.text,marginBottom:6}]}>{t('profitLoss')}</Text>
                 <Text style={[FONTS.h5,FONTS.fontBaseSemiBold,{color:colors.title,lineHeight:24}]}>$45,850.15</Text>
             </View>
         </View>

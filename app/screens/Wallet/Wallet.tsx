@@ -16,6 +16,7 @@ import TransferSheet from '../../components/BottomSheet/TransferSheet';
 import DepositSheet from '../../components/BottomSheet/DepositSheet';
 import { Checkbox } from 'react-native-paper';
 import Api from "../../../services/Api";
+import { useTranslation } from 'react-i18next';
 const walletData = [
     {
         image : IMAGES.bitcoin,
@@ -73,7 +74,7 @@ type WalletScreenProps = CompositeScreenProps<
 >;
 
 const WalletScreen = ({navigation} : WalletScreenProps) => {
-
+    const { t } = useTranslation(); 
     const theme = useTheme();
     const {colors} : {colors : any} = theme;
     const [toggleCheckBox , setToggleCheckBox] = useState<boolean>(false);
@@ -187,7 +188,7 @@ const WalletScreen = ({navigation} : WalletScreenProps) => {
                             marginTop:18,
                         }}
                     >
-                        <Text style={[FONTS.fontLg,FONTS.fontSemiBold,{color:colors.title,flex:1}]}>Conversion</Text>
+                        <Text style={[FONTS.fontLg,FONTS.fontSemiBold,{color:colors.title,flex:1}]}>{t('conversion')}</Text>
                         <View
                             style={{
                                 flexDirection:'row',

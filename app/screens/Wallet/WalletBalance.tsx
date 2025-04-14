@@ -5,7 +5,7 @@ import { COLORS, FONTS, SIZES } from '../../constants/theme';
 import { IMAGES } from '../../constants/Images';
 import { LinearGradient } from 'expo-linear-gradient';
 import { VictoryPie } from 'victory-native';
-
+import { useTranslation } from 'react-i18next';
 type Props = {
     navigation : any;
     bottomSheetRef : any;
@@ -15,6 +15,8 @@ type Props = {
 }
 
 const WalletBalance = ({navigation, bottomSheetRef, setSheetType,sbalance, fbalance} : Props) => {
+    const { t } = useTranslation(); // Get translation function
+
     return (
         <LinearGradient
             start={{x: 1, y: 0.5}} end={{x: 0.5, y: 1.0}}
@@ -41,7 +43,7 @@ const WalletBalance = ({navigation, bottomSheetRef, setSheetType,sbalance, fbala
                 >
                     <Feather  size={26} color={COLORS.white} name='chevron-left'/>
                 </TouchableOpacity>
-                <Text style={[FONTS.h5,{color:COLORS.white,top:-2,flex:1,textAlign:'center'}]}>Wallet</Text>
+                <Text style={[FONTS.h5,{color:COLORS.white,top:-2,flex:1,textAlign:'center'}]}>{t('wallet')}</Text>
                 <View
                     style={{
                         width:35
@@ -87,7 +89,7 @@ const WalletBalance = ({navigation, bottomSheetRef, setSheetType,sbalance, fbala
                         paddingTop:30,
                     }}
                 >
-                    <Text style={[FONTS.font,FONTS.fontMedium,{color:COLORS.primary,marginBottom:8}]}>Total Balance</Text>
+                    <Text style={[FONTS.font,FONTS.fontMedium,{color:COLORS.primary,marginBottom:8}]}>{t('totalBalance')}</Text>
                     <Text style={[FONTS.h1,FONTS.fontBaseSemiBold,{color:COLORS.white,lineHeight:42,marginBottom:2}]}>{(fbalance+sbalance).toFixed(2)}</Text>
                     <Text style={[FONTS.fontSm,{color:COLORS.darkText}]}>BTC: 1,99992.01</Text>
                 </View>
@@ -118,7 +120,7 @@ const WalletBalance = ({navigation, bottomSheetRef, setSheetType,sbalance, fbala
                         </View>
                         <Text
                             style={styles.btnTxt}
-                        >Deposit</Text>
+                        >{t('deposit')}</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.btnlink}>
@@ -138,7 +140,7 @@ const WalletBalance = ({navigation, bottomSheetRef, setSheetType,sbalance, fbala
                         </View>
                         <Text
                             style={styles.btnTxt}
-                        >Withdraw</Text>
+                        >{t('withdraw')}</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.btnlink}>
@@ -158,7 +160,7 @@ const WalletBalance = ({navigation, bottomSheetRef, setSheetType,sbalance, fbala
                         </View>
                         <Text
                             style={styles.btnTxt}
-                        >Transfer</Text>
+                        >{t('transfer')}</Text>
                     </TouchableOpacity>
                 </View>
             </View>

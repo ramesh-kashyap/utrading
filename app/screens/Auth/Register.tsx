@@ -20,10 +20,12 @@ import Button from '../../components/Button/Button';
 import PhoneInput from 'react-native-phone-input';
 import Api from "../../../services/Api";
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next'; 
 type RegisterScreenProps = StackScreenProps<RootStackParamList, 'Register'>;
 
 const Register = ({ navigation }: RegisterScreenProps) => {
     const { colors }: { colors: any } = useTheme();
+     const { t, i18n } = useTranslation(); 
     const phoneRef = useRef<PhoneInput>(null); // Create a ref for the PhoneInput component
     const [phone, setPhone] = useState(''); // State to manage the phone number
     const [password, setPassword] = useState(''); // State to manage the password
@@ -142,8 +144,8 @@ const Register = ({ navigation }: RegisterScreenProps) => {
                                 marginBottom: 20,
                             }}
                         >
-                            <Text style={[GlobalStyleSheet.loginTitle, { color: colors.title }]}>Getting Started</Text>
-                            <Text style={[GlobalStyleSheet.loginDesc, { color: colors.text }]}>A crypto login is a secure authentication process that enables users to access</Text>
+                            <Text style={[GlobalStyleSheet.loginTitle, { color: colors.title }]}>{t('gettingStarted')}</Text>
+                            <Text style={[GlobalStyleSheet.loginDesc, { color: colors.text }]}>{t('regDesc')}</Text>
                         </View>
                         <View>
                             <TouchableOpacity
@@ -155,7 +157,7 @@ const Register = ({ navigation }: RegisterScreenProps) => {
                                     justifyContent: 'center',
                                 }}
                             >
-                                <Text style={[GlobalStyleSheet.label, { color: colors.title }]}>Register with Google</Text>
+                                <Text style={[GlobalStyleSheet.label, { color: colors.title }]}>{t('registerWithGoogle')}</Text>
                                 <Image
                                     style={{
                                         height: 20,
@@ -176,7 +178,7 @@ const Register = ({ navigation }: RegisterScreenProps) => {
                                         justifyContent:'center',
                                     }}
                                 >
-                                    <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>Register with Google</Text>
+                                    <Text style={[GlobalStyleSheet.label,{color:colors.title}]}>{t('registerWithGoogle')}</Text>
                                     <Image
                                         style={{
                                             height:20,
@@ -188,13 +190,13 @@ const Register = ({ navigation }: RegisterScreenProps) => {
                             </View>
 
                             <View style={GlobalStyleSheet.inputGroup}>
-                            <Text style={[GlobalStyleSheet.label, { color: colors.title }]}>Name</Text>
-                            <Input placeholder={'Type your name'}  value={name} // Bind input value to 'name' state
+                            <Text style={[GlobalStyleSheet.label, { color: colors.title }]}>{t('nameLabel')}</Text>
+                            <Input placeholder={t('namePlaceholder')}  value={name} // Bind input value to 'name' state
                         onChangeText={handleNameChange}  type={'text'}/>
                             </View>
 
                         <View style={GlobalStyleSheet.inputGroup}>
-                            <Text style={[GlobalStyleSheet.label, { color: colors.title }]}>Phone</Text>
+                            <Text style={[GlobalStyleSheet.label, { color: colors.title }]}>{t('phone')}</Text>
                             {/* PhoneInput Component */}
                             <PhoneInput
     ref={phoneRef}
@@ -232,16 +234,16 @@ const Register = ({ navigation }: RegisterScreenProps) => {
                         </View>
 
                         <View style={GlobalStyleSheet.inputGroup}>
-                            <Text style={[GlobalStyleSheet.label, { color: colors.title }]}>Password</Text>
+                            <Text style={[GlobalStyleSheet.label, { color: colors.title }]}>{t('password')}</Text>
                             <Input
                                 placeholder={'Type your password'}
                                 value={password}
                                 onChangeText={handlePasswordChange}
-                                type={'password'}
+                                type={t('password')}
                             />
                         </View>
                         <View style={GlobalStyleSheet.inputGroup}>
-                            <Text style={[GlobalStyleSheet.label, { color: colors.title }]}>Confirm password</Text>
+                            <Text style={[GlobalStyleSheet.label, { color: colors.title }]}>{t('confirmPassword')}</Text>
                             <Input
                                 placeholder={'Confirm password'}
                                 value={confirmPassword}
@@ -263,14 +265,14 @@ const Register = ({ navigation }: RegisterScreenProps) => {
                                 paddingVertical: 15,
                             }}
                         >
-                            <Text style={{ ...FONTS.font, color: colors.title }}>Already have an account? </Text>
+                            <Text style={{ ...FONTS.font, color: colors.title }}>{t('alreadyHaveAccount')} </Text>
                             <TouchableOpacity
                                 onPress={() => navigation.navigate('Login')}
                                 style={{
                                     position: 'relative',
                                 }}
                             >
-                                <Text style={GlobalStyleSheet.linkBtn}>Login</Text>
+                                <Text style={GlobalStyleSheet.linkBtn}>{t('login')}</Text>
                                 <View style={GlobalStyleSheet.linkUnderLine} />
                             </TouchableOpacity>
                         </View>

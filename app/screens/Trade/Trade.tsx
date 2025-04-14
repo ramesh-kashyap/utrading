@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, StyleSheet,Alert } from 'react-native';
 import { CompositeScreenProps, useTheme } from '@react-navigation/native';
 import { StackScreenProps } from "@react-navigation/stack";
@@ -18,20 +18,24 @@ import OrderBook from './OrderBook';
 import OpenOrder from './OpenOrder';
 import TradeHistory from './TradeHistory';
 import {Feather}  from '@expo/vector-icons';
-
+import Api from "../../../services/Api";
+import { useTranslation } from 'react-i18next';
 type TradeScreenProps = CompositeScreenProps<
     StackScreenProps<BottomTabParamList, 'Trade'>,
     StackScreenProps<RootStackParamList>
 >;
 
 const TradeScreen = ({navigation} : TradeScreenProps) => {
-    
+     const { t } = useTranslation(); 
     const {colors} : {colors : any} = useTheme();
      const [modalShow , setModal] = useState<boolean>(false);
     const [activeTab , setActiveTab] = useState<string>('buy');
     const [activeTab2 , setActive2Tab] = useState<string>('Limit');
     const [activeSpot, setActiveSpot] =useState('spot');
     const [isPaused, setIsPaused] = useState(false);
+    const [totalAmounts, setTotalAmounts] = useState<{ [key: string]: string | number }>({});
+    const [totalPnl, setTotalPnl] = useState<number>(0);
+     const [totalPnlPercentage, setTotalPnlPercentage] = useState<number>(0);
     const [coinData , setCoinData] = useState<any>({
             image : IMAGES.bitcoin,
             name : 'Spot',
@@ -40,28 +44,88 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
             amount : '0.154836',
             rate : '+4.2',
         });
-        const toggleSpot = () => {
-            setActiveSpot(prev => (prev === 'spot' ? 'future' : 'spot'));
+        const fetchBalance = async (type) => {
+            try {
+              // Call the API with the query parameter 'type'
+              const response = await Api.get('/getActiveTrades', {
+                params: { type },
+              });
+              if (response.data.success) {
+                // Update coinData with the fetched balance and update the name accordingly
+                setTotalPnl(response.data.totalOverallPnl);
+                setTotalPnlPercentage(response.data.totalOverallPnlPercentage);
+                // setCoinData((prev) => ({
+                //   ...prev,
+                //   balance: response.data.balance,
+                //   name: type.charAt(0).toUpperCase() + type.slice(1),
+                // }));
+              } else {
+                Alert.alert('Error', response.data.error || 'Failed to fetch balance.');
+              }
+            } catch (error) {
+              console.error('Error fetching balance:', error);
+              Alert.alert('Error', 'An error occurred while fetching balance.');
+              
+            }
           };
+        
+          // On component mount, fetch the default "spot" balance.
+          useEffect(() => {
+            const intervalId = setInterval(() => {
+              fetchBalance(activeSpot); // Use the current activeSpot state here.
+            }, 1000);
+          
+            return () => clearInterval(intervalId);
+          }, [activeSpot]);
+          // Toggle between "spot" and "future" types
+          const toggleSpot = async () => {
+            const newType = activeSpot === 'spot' ? 'future' : 'spot';
+            setActiveSpot(newType);
+            await fetchBalance(newType);
+          };
+        
+        
           const pausePlay = () => {
-            console.log('hieihei');
             Alert.alert(
               'Confirmation',
               `Are you sure you want to ${isPaused ? 'resume' : 'pause'}?`,
               [
-                {
-                  text: 'Cancel',
-                  style: 'cancel',
-                },
+                { text: 'Cancel', style: 'cancel' },
                 {
                   text: 'Yes',
-                  onPress: () => setIsPaused(!isPaused),
-                },
+                  onPress: async () => {
+                    const newPauseState = !isPaused;
+                    setIsPaused(newPauseState);
+                    try {
+                      // Choose endpoint based on active coin type:
+                      // For "spot", use /start-spot-cron or /stop-spot-cron.
+                      // For "future", use /start-future-cron or /stop-future-cron.
+                      let endpoint = '';
+                      if (activeSpot === 'spot') {
+                        endpoint = newPauseState ? '/stop-spot-cron' : '/start-spot-cron';
+                      } else {
+                        endpoint = newPauseState ? '/stop-future-cron' : '/start-future-cron';
+                      }
+                      const response = await Api.get(endpoint);
+                      if (
+                        response.data.status &&
+                        (response.data.status.includes('started') ||
+                          response.data.status.includes('stopped'))
+                      ) {
+                        console.log(response.data.status);
+                      } else {
+                        console.log(`Error: Failed to ${newPauseState ? 'stop' : 'start'} the cron job`);
+                      }
+                    } catch (error) {
+                      console.error('API error:', error);
+                    }
+                  }
+                }
               ],
               { cancelable: false }
             );
           };
-
+          
     return (
         <SafeAreaView
             style={{
@@ -78,11 +142,11 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
                 style={GlobalStyleSheet.colorBg2}
             />
             <Header
-                title='Trade'
+                title={t('trade')}
                 leftIcon='back'
                 leftAction={() => navigation.navigate('Home')}
             />
-            <ScrollView>
+            {/* <ScrollView> */}
                 <View style={GlobalStyleSheet.container}>
                     {/* <CoinDropDown colors={colors}/> */}
                     <View
@@ -159,12 +223,12 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
                         FONTS.h6,FONTS.fontBaseSemiBold,{
                             color:colors.title,
                         }
-                    ]}>{coinData.balance}</Text>
+                    ]}>{Number(totalPnl).toFixed(2)}</Text>
                     <Text style={[
                         FONTS.fontXs,{
-                            color:coinData.rate > 0 ? COLORS.success : COLORS.danger,
+                            color:totalPnlPercentage > 0 ? COLORS.success : COLORS.danger,
                         }
-                    ]}>{coinData.rate}%</Text>
+                    ]}>{Number(totalPnlPercentage).toFixed(2)}%</Text>
                 </View>
                 <Feather  size={22} color={colors.text} onPress={pausePlay}  name={isPaused ? 'play-circle' : 'pause-circle'}/>
             </TouchableOpacity>
@@ -255,23 +319,23 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
                         colors={colors}
                     /> */}
                     <TabStyle1
-                tabMenu={['Open Orders','Trade History']}
+                 tabMenu={[t('openOrders'), t('tradeHistory')]}
                 setActiveTab={setActiveTab}
                 activeTab={activeTab}
                 colors={colors}
             />
 
             {activeTab === "Open Orders" ?
-                <OpenOrder colors={colors}/>
+                <OpenOrder type={activeSpot} colors={colors}/> 
                 :
             activeTab === "Trade History" ?
-                <TradeHistory colors={colors}/>
+                <TradeHistory type={activeSpot} colors={colors}/>
                 :
-                <OpenOrder colors={colors}/>
+                <OpenOrder type={activeSpot} colors={colors}/>
             }
                     
                 </View>
-            </ScrollView>
+            {/* </ScrollView> */}
         </SafeAreaView>
     )
 }

@@ -11,6 +11,7 @@ import { IMAGES } from '../../constants/Images';
 import Input from '../../components/Input/Input';
 import * as Linking from 'expo-linking'
 import { useEffect , useState} from 'react';
+import { useTranslation } from 'react-i18next'; 
 import Api from "../../../services/Api";
 const socialLink = [
     {
@@ -69,7 +70,7 @@ type ReferralScreenProps = CompositeScreenProps<
 >;
 
 const ReferralScreen = ({navigation} : ReferralScreenProps) => {
-
+const { t, i18n } = useTranslation();
     const shareAndOpen = async () => {
         const sharedLink = 'APK link'; // Replace with your actual link
     
@@ -124,7 +125,7 @@ const ReferralScreen = ({navigation} : ReferralScreenProps) => {
     return (
         <SafeAreaView>
             <Header
-                title='Referral'
+                title={t('referral')}
                 leftIcon='back'
                 leftAction={() => navigation.navigate('Home')}
             />
@@ -143,9 +144,9 @@ const ReferralScreen = ({navigation} : ReferralScreenProps) => {
                             marginBottom:20
                         }]}
                     >
-                        <Text style={{...FONTS.font,...FONTS.fontMedium,color:colors.title,marginBottom:18}}>Share your referral link and earn crypto when others trade</Text>
+                        <Text style={{...FONTS.font,...FONTS.fontMedium,color:colors.title,marginBottom:18}}>{t('shareReferral')}</Text>
                         <View style={GlobalStyleSheet.inputGroup}>
-                            <Text style={{...FONTS.fontXs,color:COLORS.primaryText,marginBottom:6}}>Referral ID</Text>
+                            <Text style={{...FONTS.fontXs,color:COLORS.primaryText,marginBottom:6}}>{t('referralID')}</Text>
                             <View>
                                 <Input
                                     defaultValue={reffrial}
@@ -173,7 +174,7 @@ const ReferralScreen = ({navigation} : ReferralScreenProps) => {
                         </View>
 
                         <View style={GlobalStyleSheet.inputGroup}>
-                            <Text style={{...FONTS.fontXs,color:COLORS.primaryText,marginBottom:6}}>Referral Link</Text>
+                            <Text style={{...FONTS.fontXs,color:COLORS.primaryText,marginBottom:6}}>{t('referralLink')}</Text>
                             <View>
                                 <Input
                                     defaultValue='0xbc6b1972ea764159a4cf1c03774'
@@ -217,7 +218,7 @@ const ReferralScreen = ({navigation} : ReferralScreenProps) => {
                                             }}
                                             source={data.icon}
                                         /> */}
-                                        <Button title="Share & Open Link" onPress={shareAndOpen} />
+                                        <Button title={t('shareOpenLink')} onPress={shareAndOpen} />
                                     </TouchableOpacity>
                                 )
                             })}
@@ -255,9 +256,9 @@ const ReferralScreen = ({navigation} : ReferralScreenProps) => {
                                         source={IMAGES.referral}
                                     />
                                 </View>
-                                <Text style={{...FONTS.font,color:colors.title}}>Your Community</Text>
+                                <Text style={{...FONTS.font,color:colors.title}}>{t('yourCommunity')}</Text>
                                 <Text style={{...FONTS.h2,color:COLORS.primary,lineHeight:37,marginBottom:4}}>99</Text>
-                                <Text style={{...FONTS.fontSm,color:colors.text}}>Referrals</Text>
+                                <Text style={{...FONTS.fontSm,color:colors.text}}>{t('referrals')}</Text>
                             </View>
                         </View>
                         <View style={{...GlobalStyleSheet.col50}}>
@@ -292,7 +293,7 @@ const ReferralScreen = ({navigation} : ReferralScreenProps) => {
                                         />
                                     </View>
                                 </View>
-                                <Text style={{...FONTS.font,color:colors.title}}>Lifetime Reward</Text>
+                                <Text style={{...FONTS.font,color:colors.title}}>{t('lifetimeReward')}</Text>
                                 <View
                                     style={{
                                         flexDirection:'row',
@@ -326,8 +327,8 @@ const ReferralScreen = ({navigation} : ReferralScreenProps) => {
                     
                     <View style={{marginBottom:20}}>
                         <View style={{alignItems:'center',marginHorizontal:6,marginBottom:20}}>
-                            <Text style={{...FONTS.h6,...FONTS.fontMedium,color:colors.title,textAlign:'center',marginBottom:8}}>Track your income with our unique five-tier referral system</Text>
-                            <Text style={{...FONTS.fontXs,lineHeight:18,color:colors.text,textAlign:'center'}}>Crypto Money shares 20% of its trading fee profits from your direct and indirect referrals.</Text>
+                            <Text style={{...FONTS.h6,...FONTS.fontMedium,color:colors.title,textAlign:'center',marginBottom:8}}> {t('trackIncome')}</Text>
+                            <Text style={{...FONTS.fontXs,lineHeight:18,color:colors.text,textAlign:'center'}}>{t('referralInfo')}</Text>
                         </View>
                         <View   
                             style={[{
@@ -338,9 +339,10 @@ const ReferralScreen = ({navigation} : ReferralScreenProps) => {
                             }]}
                         >
                             <Text style={{...FONTS.fontSm,color:colors.title,flexGrow:150,paddingHorizontal:10}}>#</Text>
-                            <Text style={{...FONTS.fontSm,color:colors.title,flexGrow:100,paddingHorizontal:10}}>Reward Split</Text>
-                            <Text style={{...FONTS.fontSm,color:colors.title,flexGrow:100,paddingHorizontal:10}}>Referrals</Text>
-                            <Text style={{...FONTS.fontSm,color:colors.title,flexGrow:100,paddingHorizontal:10,textAlign:'right'}}>Amount Earned</Text>
+                            <Text style={{...FONTS.fontSm,color:colors.title,flexGrow:100,paddingHorizontal:10}}>{t('rewardSplit')}
+                            </Text>
+                            <Text style={{...FONTS.fontSm,color:colors.title,flexGrow:100,paddingHorizontal:10}}>{t('referrals')}</Text>
+                            <Text style={{...FONTS.fontSm,color:colors.title,flexGrow:100,paddingHorizontal:10,textAlign:'right'}}>{t('amountEarned')}</Text>
                         </View>
                         {tableData.map((data,index) => {
                             return(
