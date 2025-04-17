@@ -26,6 +26,9 @@ const menuData = [
         title : "settings",
         navigate : 'Settings',
     },
+
+
+    
     {
         icon : IMAGES.settings,
         title : "apiBind",
@@ -40,6 +43,13 @@ const menuData = [
         title : "history",
         navigate : 'history',
     },
+    {
+        icon : IMAGES.language,
+        title : "language",
+        type : 'language',
+    },
+
+
     {
         icon : IMAGES.language,
         title : "language",

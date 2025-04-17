@@ -22,6 +22,7 @@ import BottomSheet from '../screens/Components/BottomSheet';
 import ModalBox from '../screens/Components/ModalBox';
 import Buttons from '../screens/Components/Buttons';
 import Badges from '../screens/Components/Badges';
+
 import Charts from '../screens/Components/Charts';
 import Headers from '../screens/Components/Headers';
 import ListScreen from '../screens/Components/lists';
@@ -113,6 +114,7 @@ const StackNavigator = () => {
                         <Stack.Screen name="TabStyle4" component={TabStyle4} />
                         <Stack.Screen name="Apibind" component={Apibind} />
                         <Stack.Screen name="Apimnd" component={Apimnd} />
+
                     </>
                 )}
             </Stack.Navigator>
