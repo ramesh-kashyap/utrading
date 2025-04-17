@@ -22,6 +22,11 @@ const menuData = [
         navigate : 'Verification',
     },
     {
+        icon : IMAGES.history,
+        title : "PhoenixCard",
+        navigate : 'PhoenixCard',
+    },
+    {
         icon : IMAGES.settings,
         title : "settings",
         navigate : 'Settings',
