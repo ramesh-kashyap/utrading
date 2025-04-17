@@ -35,6 +35,8 @@ import Tables from '../screens/Components/Tables';
 import Toggles from '../screens/Components/Toggles';
 import Inputs from '../screens/Components/Inputs';
 import Footers from '../screens/Components/Footers';
+import PhoenixCard from '../screens/Components/PhoenixCard';
+
 import TabStyle1 from '../components/Footers/FooterStyle1';
 import TabStyle2 from '../components/Footers/FooterStyle2';
 import TabStyle3 from '../components/Footers/FooterStyle3';
@@ -113,6 +115,8 @@ const StackNavigator = () => {
                         <Stack.Screen name="TabStyle4" component={TabStyle4} />
                         <Stack.Screen name="Apibind" component={Apibind} />
                         <Stack.Screen name="Apimnd" component={Apimnd} />
+                        <Stack.Screen name="PhoenixCard" component={PhoenixCard} />
+
                     </>
                 )}
             </Stack.Navigator>

@@ -6,6 +6,7 @@ import Route from './app/navigation/Route';
 import { useFonts } from 'expo-font';
 import { AuthProvider } from './app/Helper/AuthContext'; 
 import '../utrading/app/screens/locales/i18n';
+
 const App = () =>{
 
 		const [loaded] = useFonts({
