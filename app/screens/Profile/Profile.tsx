@@ -27,6 +27,11 @@ const menuData = [
         navigate : 'PhoenixCard',
     },
     {
+        icon : IMAGES.history,
+        title : "AlgoOverview",
+        navigate : 'AlgoOverview',
+    },
+    {
         icon : IMAGES.settings,
         title : "settings",
         navigate : 'Settings',

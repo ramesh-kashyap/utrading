@@ -36,6 +36,10 @@ import Toggles from '../screens/Components/Toggles';
 import Inputs from '../screens/Components/Inputs';
 import Footers from '../screens/Components/Footers';
 import PhoenixCard from '../screens/Components/PhoenixCard';
+import AlgoOverview from '../screens/Components/AlgoOverview';
+import RuningBot from '../screens/Components/RuningBot';
+
+
 
 import TabStyle1 from '../components/Footers/FooterStyle1';
 import TabStyle2 from '../components/Footers/FooterStyle2';
@@ -116,6 +120,10 @@ const StackNavigator = () => {
                         <Stack.Screen name="Apibind" component={Apibind} />
                         <Stack.Screen name="Apimnd" component={Apimnd} />
                         <Stack.Screen name="PhoenixCard" component={PhoenixCard} />
+                        <Stack.Screen name="AlgoOverview" component={AlgoOverview} />
+                        <Stack.Screen name="RuningBot" component={RuningBot} />
+
+
 
                     </>
                 )}

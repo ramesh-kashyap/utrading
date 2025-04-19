@@ -30,6 +30,8 @@ const BottomMenu = ({state, navigation, descriptors}: Props) => {
         new Animated.Value(
             tabWidth < SIZES.container ? tabWidth / 2.5 : SIZES.container / 2.5,
         ),
+
+        
     ).current;
     
     const tabW =

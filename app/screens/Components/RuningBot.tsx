@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image, TextInput, Modal } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet,StatusBar, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // 👈 Add this
 
 export default function PhoenixCard() {
-  const [showModal, setShowModal] = useState(false);
-  const [upperLimit, setUpperLimit] = useState('');
-  const [lowerLimit, setLowerLimit] = useState('');
-  const navigation = useNavigation(); // 👈 Hook for navigation
-
-
+      const navigation = useNavigation(); // 👈 Hook for navigation
+    
   return (
     <View style={styles.container}>
 
@@ -63,51 +59,13 @@ export default function PhoenixCard() {
       </View>
 
       {/* Follow Button */}
-      <TouchableOpacity style={styles.followButton} onPress={() => setShowModal(true)}>
-        <Text style={styles.followText}>Follow</Text>
+      <TouchableOpacity style={styles.followButton}   onPress={() => {
+            
+            navigation.navigate('AlgoOverview'); // 👈 Navigate to your bot page
+          }}>
+        <Text style={styles.followText}>Bot Runing </Text>
       </TouchableOpacity>
     </View>
-      {/* Popup Modal */}
-      <Modal transparent={true} visible={showModal} animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.popupBox}>
-            <Text style={styles.popupTitle}>Set Limit</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Lower Limit"
-              placeholderTextColor="#999"
-              value={lowerLimit}
-              keyboardType="numeric"
-              onChangeText={setLowerLimit}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Upper Limit"
-              placeholderTextColor="#999"
-              value={upperLimit}
-              keyboardType="numeric"
-              onChangeText={setUpperLimit}
-            />
-
-            <View style={styles.popupActions}>
-              <TouchableOpacity onPress={() => setShowModal(false)} style={styles.cancelButton}>
-                <Text style={styles.cancelText}>Cancel</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.confirmButton}
-                onPress={() => {
-                
-                  navigation.navigate('RuningBot'); // 👈 Navigate to your bot page
-                }}
-              >
-                <Text style={styles.confirmText}>Confirm</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </View>
 
   );
@@ -252,73 +210,6 @@ const styles = StyleSheet.create({
       fontSize: 16,
       fontWeight: 'bold'
     },
-    modalOverlay: {
-      flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    
-    popupBox: {
-      backgroundColor: '#1e1e1e',
-      padding: 20,
-      borderRadius: 12,
-      width: '80%',
-      shadowColor: '#000',
-      shadowOpacity: 0.25,
-      shadowRadius: 10,
-      elevation: 10,
-    },
-    
-    popupTitle: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: '#00FF84',
-      marginBottom: 16,
-      textAlign: 'center',
-    },
-    
-    input: {
-      backgroundColor: '#2c2c2c',
-      paddingVertical: 10,
-      paddingHorizontal: 12,
-      borderRadius: 8,
-      color: '#fff',
-      marginBottom: 12,
-      fontSize: 14,
-    },
-    
-    popupActions: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginTop: 10,
-    },
-    
-    cancelButton: {
-      backgroundColor: '#444',
-      paddingVertical: 10,
-      paddingHorizontal: 16,
-      borderRadius: 8,
-    },
-    
-    cancelText: {
-      color: '#fff',
-      fontWeight: 'bold',
-    },
-    
-    confirmButton: {
-      backgroundColor: '#00FF84',
-      paddingVertical: 10,
-      paddingHorizontal: 16,
-      borderRadius: 8,
-    },
-    
-    confirmText: {
-      color: '#000',
-      fontWeight: 'bold',
-    }
-    
-    
     
   });
   
