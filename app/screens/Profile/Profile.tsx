@@ -28,7 +28,7 @@ const menuData = [
     },
     {
         icon : IMAGES.history,
-        title : "AlgoOverview",
+        title : "Information",
         navigate : 'AlgoOverview',
     },
     {

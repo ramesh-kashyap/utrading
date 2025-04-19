@@ -1,21 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image, TextInput, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // 👈 Add this
+import Header from '../../layout/Header';
+import axios from 'axios';
+import Api from "../../../services/Api";
 
 export default function PhoenixCard() {
+  
   const [showModal, setShowModal] = useState(false);
   const [upperLimit, setUpperLimit] = useState('');
   const [lowerLimit, setLowerLimit] = useState('');
   const navigation = useNavigation(); // 👈 Hook for navigation
+  const [botData, setBotData] = useState([]);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(true);
 
 
+  
+
+
+
+  const getInfo = async () => {
+    setLoading(true);
+    try {
+        const response = await Api.get("/future-bot");
+        if (response.data.success) {
+          setBotData(response.data.bots); // ✅ updated based on response key
+        } else {
+          console.error('Error fetching future bots:', error);
+
+          setMessage(response.data.message || 'No data found');
+        }
+    } catch (error) {
+    console.error('Error fetching future bots:', error);
+        setMessage('Failed to load bots');
+    }
+    finally {
+        setLoading(false); // Ensure UI updates after fetching
+    }
+};
+
+
+   useEffect(()=>{
+    getInfo();
+   },[]);
+ 
+  
   return (
+    
     <View style={styles.container}>
+      
+       <Header
+                title='Strategy'
+                leftIcon='back'
+            />
 
-    <View style={styles.card}>
+
+{botData.length === 0 ? (
+  <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>No data found</Text>
+) : (
+    botData.map((bot) => (
+
+            
+ <TouchableOpacity onPress={() => {
+                
+                navigation.navigate('AlgoOverview'); // 👈 Navigate to your bot page
+              }} >
+    <View style={styles.card} >
       {/* Top header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Phoenix–2X</Text>
+        <Text style={styles.title}>{bot.coin_name}-{bot.leverage}</Text>
 
         <View style={styles.badges}>
           <Text style={styles.futuresBadge}>Futures</Text>
@@ -25,8 +79,8 @@ export default function PhoenixCard() {
 
       {/* Sub info */}
       <View style={styles.subHeader}>
-        <Text style={styles.subText}>ETHUSD_PERP | 139 Followers</Text>
-        <Text style={styles.leverage}>2x Leverage</Text>
+        <Text style={styles.subText}>{bot.coin_name} | 139 Followers</Text>
+        <Text style={styles.leverage}>{bot.leverage}x Leverage</Text>
       </View>
 
       {/* ROI Section */}
@@ -47,7 +101,7 @@ export default function PhoenixCard() {
       <View style={styles.stats}>
         <Text style={styles.annualRoi}>+116.56%</Text>
         <View style={styles.aumBox}>
-          <Text style={styles.aumValue}>17.14</Text>
+          <Text style={styles.aumValue}>{bot.amount} USDT</Text>
           <Text style={styles.aumLabel}>AUM (ETH)</Text>
         </View>
       </View>
@@ -67,6 +121,9 @@ export default function PhoenixCard() {
         <Text style={styles.followText}>Follow</Text>
       </TouchableOpacity>
     </View>
+    </TouchableOpacity>
+   ))
+  )}
       {/* Popup Modal */}
       <Modal transparent={true} visible={showModal} animationType="fade">
         <View style={styles.modalOverlay}>

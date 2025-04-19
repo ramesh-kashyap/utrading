@@ -59,10 +59,7 @@ export default function PhoenixCard() {
       </View>
 
       {/* Follow Button */}
-      <TouchableOpacity style={styles.followButton}   onPress={() => {
-            
-            navigation.navigate('AlgoOverview'); // 👈 Navigate to your bot page
-          }}>
+      <TouchableOpacity style={styles.followButton} >
         <Text style={styles.followText}>Bot Runing </Text>
       </TouchableOpacity>
     </View>
