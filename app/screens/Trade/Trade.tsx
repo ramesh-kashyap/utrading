@@ -16,6 +16,7 @@ import Button from '../../components/Button/Button';
 import OrderTabs from './OrderTabs';
 import OrderBook from './OrderBook';
 import OpenOrder from './OpenOrder';
+import OpenBot from './OpenBot';
 import TradeHistory from './TradeHistory';
 import {Feather}  from '@expo/vector-icons';
 import Api from "../../../services/Api";
@@ -326,12 +327,14 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
             />
 
             {activeTab === "Open Orders" ?
-                <OpenOrder type={activeSpot} colors={colors}/> 
+                // <OpenOrder type={activeSpot} colors={colors}/> 
+                <OpenBot/> 
                 :
             activeTab === "Trade History" ?
                 <TradeHistory type={activeSpot} colors={colors}/>
                 :
-                <OpenOrder type={activeSpot} colors={colors}/>
+                // <OpenOrder type={activeSpot} colors={colors}/>
+                <OpenBot/> 
             }
                     
                 </View>
