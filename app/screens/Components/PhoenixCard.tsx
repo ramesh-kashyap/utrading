@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image, TextInput, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image,ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // 👈 Add this
 import Header from '../../layout/Header';
-import axios from 'axios';
 import Api from "../../../services/Api";
 
 export default function PhoenixCard() {
   
-  const [showModal, setShowModal] = useState(false);
-  const [upperLimit, setUpperLimit] = useState('');
-  const [lowerLimit, setLowerLimit] = useState('');
+  
   const navigation = useNavigation(); // 👈 Hook for navigation
   const [botData, setBotData] = useState([]);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
-
-
-  
-
 
 
   const getInfo = async () => {
@@ -48,7 +41,7 @@ export default function PhoenixCard() {
   
   return (
     
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       
        <Header
                 title='Strategy'
@@ -69,7 +62,7 @@ export default function PhoenixCard() {
     <View style={styles.card} >
       {/* Top header */}
       <View style={styles.header}>
-        <Text style={styles.title}>{bot.coin_name}-{bot.leverage}</Text>
+        <Text style={styles.title}>{bot.coin_name}-{bot.leverage}X</Text>
 
         <View style={styles.badges}>
           <Text style={styles.futuresBadge}>Futures</Text>
@@ -117,55 +110,37 @@ export default function PhoenixCard() {
       </View>
 
       {/* Follow Button */}
-      <TouchableOpacity style={styles.followButton} onPress={() => setShowModal(true)}>
-        <Text style={styles.followText}>Follow</Text>
-      </TouchableOpacity>
+      <TouchableOpacity
+  style={styles.followButton}
+  onPress={async () => {
+    try {
+      const response = await Api.post("/submit-pending-bot", {
+        coin_name: bot.coin_name,
+        amount: bot.amount,
+        leverage: bot.leverage,
+      });
+
+      if (response.data.success) {
+        navigation.navigate("RuningBot"); // 👈 redirect to "Running Bot" screen
+
+      } else {
+        alert(response.data.message || "Failed to follow bot.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error following bot.");
+    }
+  }}
+>
+  <Text style={styles.followText}>Follow</Text>
+</TouchableOpacity>
+
     </View>
     </TouchableOpacity>
    ))
   )}
-      {/* Popup Modal */}
-      <Modal transparent={true} visible={showModal} animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.popupBox}>
-            <Text style={styles.popupTitle}>Set Limit</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Lower Limit"
-              placeholderTextColor="#999"
-              value={lowerLimit}
-              keyboardType="numeric"
-              onChangeText={setLowerLimit}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Upper Limit"
-              placeholderTextColor="#999"
-              value={upperLimit}
-              keyboardType="numeric"
-              onChangeText={setUpperLimit}
-            />
-
-            <View style={styles.popupActions}>
-              <TouchableOpacity onPress={() => setShowModal(false)} style={styles.cancelButton}>
-                <Text style={styles.cancelText}>Cancel</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.confirmButton}
-                onPress={() => {
-                
-                  navigation.navigate('RuningBot'); // 👈 Navigate to your bot page
-                }}
-              >
-                <Text style={styles.confirmText}>Confirm</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </View>
+      
+    </ScrollView>
 
   );
 }

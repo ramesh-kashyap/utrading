@@ -5,10 +5,10 @@ import Header from '../../layout/Header';
 const AlgoOverview = () => {
   return (
     <ScrollView style={styles.container}>
-         <Header
+         {/* <Header
                 title='Information'
                 leftIcon='back'
-            />
+            /> */}
       <View style={styles.card}>
         <Text style={styles.heading}>Algo Overview</Text>
 

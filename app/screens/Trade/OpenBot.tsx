@@ -1,17 +1,50 @@
-import React from 'react';
-import { View, Text, StyleSheet,StatusBar, TouchableOpacity, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // 👈 Add this
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import Api from "../../../services/Api";
 
 export default function OpenBot() {
-      const navigation = useNavigation(); // 👈 Hook for navigation
-    
+    const [botData, setBotData] = useState([]);
+      const [message, setMessage] = useState('');
+      const [loading, setLoading] = useState(true);
+
+      
+
+  const getInfo = async () => {
+    setLoading(true);
+    try {
+        const response = await Api.get("/future-runing-bot");
+        if (response.data.success) {
+          console.log(response);
+          setBotData(response.data.bots); // ✅ updated based on response key
+        } else {
+          console.error('Error fetching future bots:', error);
+
+          setMessage(response.data.message || 'No data found');
+        }
+    } catch (error) {
+    console.error('Error fetching future bots:', error);
+        setMessage('Failed to load bots');
+    }
+    finally {
+        setLoading(false); // Ensure UI updates after fetching
+    }
+};
+
+
+   useEffect(()=>{
+    getInfo();
+   },[]);
+ 
   return (
     <View style={styles.container}>
-
+{botData.length === 0 ? (
+  <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>No data found</Text>
+) : (
+    botData.map((bot) => (
     <View style={styles.card}>
       {/* Top header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Phoenix–2X</Text>
+        <Text style={styles.title}>{bot.coin_name}-{bot.leverage}X</Text>
 
         <View style={styles.badges}>
           <Text style={styles.futuresBadge}>Futures</Text>
@@ -21,8 +54,8 @@ export default function OpenBot() {
 
       {/* Sub info */}
       <View style={styles.subHeader}>
-        <Text style={styles.subText}>ETHUSD_PERP | 139 Followers</Text>
-        <Text style={styles.leverage}>2x Leverage</Text>
+        <Text style={styles.subText}>{bot.coin_name} | 139 Followers</Text>
+        <Text style={styles.leverage}>{bot.leverage}x Leverage</Text>
       </View>
 
       {/* ROI Section */}
@@ -43,7 +76,7 @@ export default function OpenBot() {
       <View style={styles.stats}>
         <Text style={styles.annualRoi}>+116.56%</Text>
         <View style={styles.aumBox}>
-          <Text style={styles.aumValue}>17.14</Text>
+          <Text style={styles.aumValue}>{bot.amount} USDT</Text>
           <Text style={styles.aumLabel}>AUM (ETH)</Text>
         </View>
       </View>
@@ -59,13 +92,12 @@ export default function OpenBot() {
       </View>
 
       {/* Follow Button */}
-      <TouchableOpacity style={styles.followButton}   onPress={() => {
-            
-            navigation.navigate('AlgoOverview'); // 👈 Navigate to your bot page
-          }}>
+      <TouchableOpacity style={styles.followButton} >
         <Text style={styles.followText}>Bot Runing </Text>
       </TouchableOpacity>
     </View>
+     ))
+    )}
     </View>
 
   );

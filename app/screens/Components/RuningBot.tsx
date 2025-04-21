@@ -1,17 +1,59 @@
-import React from 'react';
-import { View, Text, StyleSheet,StatusBar, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // 👈 Add this
+import Header from '../../layout/Header';
+import AlgoOverview from './AlgoOverview';
+import Api from "../../../services/Api";
 
 export default function PhoenixCard() {
       const navigation = useNavigation(); // 👈 Hook for navigation
-    
+        const [botData, setBotData] = useState([]);
+     const [message, setMessage] = useState('');
+          const [loading, setLoading] = useState(true);
+
+
+          const getInfo = async () => {
+            setLoading(true);
+            try {
+                const response = await Api.get("/future-runing-bot-latest");
+                if (response.data.success) {
+                  console.log(response);
+                  setBotData(response.data.bots); // ✅ updated based on response key
+                } else {
+                  console.error('Error fetching future bots:', error);
+        
+                  setMessage(response.data.message || 'No data found');
+                }
+            } catch (error) {
+            console.error('Error fetching future bots:', error);
+                setMessage('Failed to load bots');
+            }
+            finally {
+                setLoading(false); // Ensure UI updates after fetching
+            }
+        };
+        
+        
+           useEffect(()=>{
+            getInfo();
+           },[]);
+         
   return (
     <View style={styles.container}>
+ 
+ <Header
+                title='Strategy'
+                leftIcon='back'
+            />
+{botData.length === 0 ? (
+  <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>No data found</Text>
+) : (
+  botData.map((bot) => (
 
     <View style={styles.card}>
       {/* Top header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Phoenix–2X</Text>
+        <Text style={styles.title}>{bot.coin_name}-{bot.leverage}X</Text>
 
         <View style={styles.badges}>
           <Text style={styles.futuresBadge}>Futures</Text>
@@ -21,8 +63,8 @@ export default function PhoenixCard() {
 
       {/* Sub info */}
       <View style={styles.subHeader}>
-        <Text style={styles.subText}>ETHUSD_PERP | 139 Followers</Text>
-        <Text style={styles.leverage}>2x Leverage</Text>
+        <Text style={styles.subText}>{bot.coin_name} | 139 Followers</Text>
+        <Text style={styles.leverage}>{bot.leverage}x Leverage</Text>
       </View>
 
       {/* ROI Section */}
@@ -43,10 +85,11 @@ export default function PhoenixCard() {
       <View style={styles.stats}>
         <Text style={styles.annualRoi}>+116.56%</Text>
         <View style={styles.aumBox}>
-          <Text style={styles.aumValue}>17.14</Text>
+          <Text style={styles.aumValue}>{bot.amount} USDT </Text>
           <Text style={styles.aumLabel}>AUM (ETH)</Text>
         </View>
-      </View>
+      </View>          
+
 
       {/* Graph Image Placeholder */}
       <View style={styles.graphBox}>
@@ -57,12 +100,16 @@ export default function PhoenixCard() {
 />
 
       </View>
-
       {/* Follow Button */}
       <TouchableOpacity style={styles.followButton} >
         <Text style={styles.followText}>Bot Runing </Text>
       </TouchableOpacity>
+
     </View>
+  ))
+    )}
+    <AlgoOverview />
+
     </View>
 
   );
@@ -76,6 +123,7 @@ function ROIBox({ label, value, positive = true }) {
         {value}
       </Text>
     </View>
+
   );
 }
 const styles = StyleSheet.create({

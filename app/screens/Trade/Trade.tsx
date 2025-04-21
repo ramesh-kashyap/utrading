@@ -147,7 +147,7 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
                 leftIcon='back'
                 leftAction={() => navigation.navigate('Home')}
             />
-            {/* <ScrollView> */}
+            <ScrollView>
                 <View style={GlobalStyleSheet.container}>
                     {/* <CoinDropDown colors={colors}/> */}
                     <View
@@ -206,13 +206,7 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
                     {/* <Text style={[FONTS.fontXs,FONTS.fontBaseMedium,{color:colors.text}]}>{coinData.tag}</Text> */}
                 </View>
                 <View style={{flex:1}}>
-                    {/* <Text style={[
-                        FONTS.h6,FONTS.fontSemiBold,{
-                            color:colors.title,
-                            marginBottom:6,
-                            marginTop:-2,
-                        }
-                    ]}>{coinData.name}</Text> */}
+                   
                 </View>
                 <View
                     style={{
@@ -235,90 +229,8 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
             </TouchableOpacity>
             
 
-            {/* <CoinSheet
-                modal={modalShow}
-                setModal={setModal}
-                setCoinData={setCoinData}
-            /> */}
         </View>
-                    {/* <View
-                        style={[styles.tabRow,{
-                            backgroundColor:colors.card,
-                        }]}
-                    >
-                        <TouchableOpacity
-                            onPress={() => setActiveTab('buy')}
-                            style={[styles.tabBtn,{
-                                borderColor:colors.border,
-                            },activeTab === 'buy' && {
-                                backgroundColor: COLORS.primary,
-                            }]}
-                        >
-                            <Text style={[FONTS.h6,FONTS.fontSemiBold,{color:colors.title,lineHeight:18},activeTab === 'buy' && {color:COLORS.title}]}>Buy</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => setActiveTab('sell')}
-                            style={[styles.tabBtn,{
-                                borderColor:colors.border,
-                            },activeTab === 'sell' && {
-                                backgroundColor: COLORS.danger,
-                            }]}
-                        >
-                            <Text style={[FONTS.h6,FONTS.fontSemiBold,{color:colors.title,lineHeight:18},activeTab === 'sell' && {color:COLORS.white}]}>Sell</Text>
-                        </TouchableOpacity>
-                    </View> */}
-                    {/* <View style={{marginBottom:15}}>
-                        <TabStyle1 
-                            size={'sm'}
-                            color={'#fff'}
-                            tabMenu={['Market','Limit']}
-                            setActiveTab={setActive2Tab}
-                            activeTab={activeTab2}
-                            activeIndex={1}
-                            colors={colors}
-                        />
-                    </View> */}
-
-                    
-                    {/* {activeTab2 === 'Limit' ?
-                        <LimitOrder
-                            colors={colors}
-                        />
-                        :
-                    activeTab2 === 'Market' ?
-                        <MarketOrder
-                            colors={colors}
-                        />
-                        :
-                        <></>
-                    }
-
-                    <View style={{
-                        paddingHorizontal:15,
-                        marginBottom:25,
-                    }}>
-                        {activeTab === "buy" ?
-                            <Button
-                                onPress={() => {}}
-                                title='Buy BTC'
-                            />
-                            :
-                        activeTab === "sell" ?
-                            <Button
-                                onPress={() => {}}
-                                color={COLORS.danger}
-                                title='Sell BTC'
-                            />
-                            :
-                            <></>
-                        }
-                    </View> */}
-                    
-                    {/* <OrderBook colors={colors}/> */}
-
-                    {/* <OrderTabs
-                        colors={colors}
-                    /> */}
+                  
                     <TabStyle1
                  tabMenu={[t('openOrders'), t('tradeHistory')]}
                 setActiveTab={setActiveTab}
@@ -338,7 +250,7 @@ const TradeScreen = ({navigation} : TradeScreenProps) => {
             }
                     
                 </View>
-            {/* </ScrollView> */}
+            </ScrollView>
         </SafeAreaView>
     )
 }
