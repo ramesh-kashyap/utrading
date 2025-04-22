@@ -118,6 +118,9 @@ export default function PhoenixCard() {
         coin_name: bot.coin_name,
         amount: bot.amount,
         leverage: bot.leverage,
+        upper_limit: bot.upper_limit,    // 👈 hidden field
+        lower_limit: bot.lower_limit,    // 👈 hidden field
+        grid: bot.grid   
       });
 
       if (response.data.success) {
