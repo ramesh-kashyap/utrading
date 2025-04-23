@@ -10,6 +10,8 @@ export default function PhoenixCard() {
   const [botData, setBotData] = useState([]);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [followedBots, setFollowedBots] = useState([]);
+
 
   useEffect(() => {
     fetchBotData();
@@ -21,6 +23,7 @@ export default function PhoenixCard() {
       const response = await Api.get('/future-bot');
       if (response.data.success) {
         setBotData(response.data.bots);
+        setFollowedBots(response.data.followed); // array of bot_name
       } else {
         setMessage(response.data.message || 'No data found');
       }
@@ -39,7 +42,7 @@ export default function PhoenixCard() {
         <Text style={styles.noDataText}>{message}</Text>
       ) : (
         botData.map(bot => (
-          <BotCard key={bot.id} bot={bot} navigation={navigation} />
+          <BotCard key={bot.id} bot={bot} navigation={navigation} followedBots={followedBots} />
         ))
       )}
     </ScrollView>
@@ -71,8 +74,9 @@ const handleFollow = async (bot, navigation) => {
   }
 };
 
-function BotCard({ bot, navigation }) {
+function BotCard({ bot, navigation,followedBots }) {
   const liveAge = useLiveBotAge(bot.created_at);
+  const isFollowed = followedBots.includes(bot.bot_name);
 
   return (
     <TouchableOpacity onPress={() => navigation.navigate('AlgoOverview')}>
@@ -109,9 +113,18 @@ function BotCard({ bot, navigation }) {
           <Image source={require('../../assets/images/chart.png')} style={styles.graphImage} resizeMode="contain" />
         </View>
 
-        <TouchableOpacity style={styles.followButton} onPress={() => handleFollow(bot, navigation)}>
-          <Text style={styles.followText}>Follow</Text>
-        </TouchableOpacity>
+        {isFollowed ? (
+          <View style={[styles.followButton, { backgroundColor: '#999' }]}>
+            <Text style={styles.followText}>Already Followed</Text>
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={styles.followButton}
+            onPress={() => handleFollow(bot, navigation)}
+          >
+            <Text style={styles.followText}>Follow</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </TouchableOpacity>
   );
