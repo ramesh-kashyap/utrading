@@ -10,7 +10,8 @@ export default function PhoenixCard() {
   const [botData, setBotData] = useState([]);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
-
+  
+  
   const getInfo = async () => {
     setLoading(true);
     try {
@@ -48,8 +49,30 @@ export default function PhoenixCard() {
 }
 
 function BotCard({ bot, navigation }) {
-  const liveAge = useLiveBotAge(bot.created_at);
 
+  const liveAge = useLiveBotAge(bot.created_at);
+  const handleFollowBot = async (bot, navigation) => {
+    try {
+      const response = await Api.post("/submit-pending-bot", {
+        coin_name: bot.coin_name,
+        amount: bot.amount,
+        leverage: bot.leverage,
+        upper_limit: bot.upper_limit,
+        lower_limit: bot.lower_limit,
+        grid: bot.grid
+      });
+  
+      if (response.data.success) {
+        navigation.navigate("RuningBot");
+      } else {
+        alert(response.data.message || "Failed to follow bot.");
+      }
+    } catch (err) {
+      console.error(err.response?.data);
+      
+      alert("Error following bot.");
+    }
+  };
   return (
     <TouchableOpacity onPress={() => navigation.navigate('AlgoOverview')}>
       <View style={styles.card}>
@@ -99,27 +122,8 @@ function BotCard({ bot, navigation }) {
 
         <TouchableOpacity
           style={styles.followButton}
-          onPress={async () => {
-            try {
-              const response = await Api.post("/submit-pending-bot", {
-                coin_name: bot.coin_name,
-                amount: bot.amount,
-                leverage: bot.leverage,
-                upper_limit: bot.upper_limit,
-                lower_limit: bot.lower_limit,
-                grid: bot.grid
-              });
-
-              if (response.data.success) {
-                navigation.navigate("RuningBot");
-              } else {
-                alert(response.data.message || "Failed to follow bot.");
-              }
-            } catch (err) {
-              console.error(err);
-              alert("Error following bot.");
-            }
-          }}
+          onPress={() => handleFollowBot(bot, navigation)}
+         
         >
           <Text style={styles.followText}>Follow</Text>
         </TouchableOpacity>
