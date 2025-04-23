@@ -51,20 +51,22 @@ const handleFollow = async (bot, navigation) => {
   try {
     const response = await Api.post('/submit-pending-bot', {
       coin_name: bot.coin_name,
+      bot_name: bot.bot_name,
+
       amount: bot.amount,
       leverage: bot.leverage,
       upper_limit: bot.upper_limit,
       lower_limit: bot.lower_limit,
       grid: bot.grid
     });
-
     if (response.data.success) {
       navigation.navigate('RuningBot');
     } else {
       alert(response.data.message || 'Failed to follow bot.');
     }
+    
   } catch (error) {
-    console.error(error);
+    console.error(error.response.data);
     alert('Error following bot.');
   }
 };
@@ -76,7 +78,7 @@ function BotCard({ bot, navigation }) {
     <TouchableOpacity onPress={() => navigation.navigate('AlgoOverview')}>
       <View style={styles.card}>
         <View style={styles.header}>
-          <Text style={styles.title}>{`${bot.coin_name}-${bot.leverage}X`}</Text>
+          <Text style={styles.title}>{`${bot.bot_name}-${bot.leverage}X`}</Text>
           <View style={styles.badges}>
             <Text style={styles.futuresBadge}>Futures</Text>
             <Text style={styles.coinmBadge}>COINm</Text>
@@ -98,7 +100,7 @@ function BotCard({ bot, navigation }) {
           <View style={styles.aumBox}>
             <Text style={styles.aumValue}>{bot.amount} USDT</Text>
             <Text style={styles.aumLabel}>AUM (ETH)</Text>
-          </View>
+          </View> 
         </View>
 
         <Text style={styles.time}>Time: {liveAge}</Text>
