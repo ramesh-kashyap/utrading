@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../../layout/Header';
-import Api from "../../../services/Api";
+import Api from '../../../services/Api';
 import { useLiveBotAge } from './BotDateHelper';
 
 export default function PhoenixCard() {
@@ -11,10 +11,14 @@ export default function PhoenixCard() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const getInfo = async () => {
+  useEffect(() => {
+    fetchBotData();
+  }, []);
+
+  const fetchBotData = async () => {
     setLoading(true);
     try {
-      const response = await Api.get("/future-bot");
+      const response = await Api.get('/future-bot');
       if (response.data.success) {
         setBotData(response.data.bots);
       } else {
@@ -28,16 +32,11 @@ export default function PhoenixCard() {
     }
   };
 
-  useEffect(() => {
-    getInfo();
-  }, []);
-
   return (
     <ScrollView style={styles.container}>
-      <Header title='Strategy' leftIcon='back' />
-
+      <Header title="Strategy" leftIcon="back" />
       {botData.length === 0 ? (
-        <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>No data found</Text>
+        <Text style={styles.noDataText}>{message}</Text>
       ) : (
         botData.map(bot => (
           <BotCard key={bot.id} bot={bot} navigation={navigation} />
@@ -47,6 +46,29 @@ export default function PhoenixCard() {
   );
 }
 
+// Separate follow handler logic for clarity
+const handleFollow = async (bot, navigation) => {
+  try {
+    const response = await Api.post('/submit-pending-bot', {
+      coin_name: bot.coin_name,
+      amount: bot.amount,
+      leverage: bot.leverage,
+      upper_limit: bot.upper_limit,
+      lower_limit: bot.lower_limit,
+      grid: bot.grid
+    });
+
+    if (response.data.success) {
+      navigation.navigate('RuningBot');
+    } else {
+      alert(response.data.message || 'Failed to follow bot.');
+    }
+  } catch (error) {
+    console.error(error);
+    alert('Error following bot.');
+  }
+};
+
 function BotCard({ bot, navigation }) {
   const liveAge = useLiveBotAge(bot.created_at);
 
@@ -54,7 +76,7 @@ function BotCard({ bot, navigation }) {
     <TouchableOpacity onPress={() => navigation.navigate('AlgoOverview')}>
       <View style={styles.card}>
         <View style={styles.header}>
-          <Text style={styles.title}>{bot.coin_name}-{bot.leverage}X</Text>
+          <Text style={styles.title}>{`${bot.coin_name}-${bot.leverage}X`}</Text>
           <View style={styles.badges}>
             <Text style={styles.futuresBadge}>Futures</Text>
             <Text style={styles.coinmBadge}>COINm</Text>
@@ -62,65 +84,30 @@ function BotCard({ bot, navigation }) {
         </View>
 
         <View style={styles.subHeader}>
-          <Text style={styles.subText}>{bot.coin_name} | 139 Followers</Text>
+          <Text style={styles.subText}>{`${bot.coin_name} | 139 Followers`}</Text>
           <Text style={styles.leverage}>{bot.leverage}x Leverage</Text>
         </View>
 
         <View style={styles.roiTabs}>
-          <View style={styles.roiRow}>
-            <ROIBox label="3M" value="-12.79%" positive={false} />
-            <ROIBox label="6M" value="41.15%" />
-            <ROIBox label="1Y" value="116.56%" />
-          </View>
-          <View style={styles.roiRow}>
-            <ROIBox label="2Y" value="318.38%" />
-            <ROIBox label="3Y" value="5.65%" />
-            <ROIBox label="4Y" value="33.78%" />
-          </View>
+          <ROIRow values={[["3M", "-12.79%", false], ["6M", "41.15%"], ["1Y", "116.56%"]]} />
+          <ROIRow values={[["2Y", "318.38%"], ["3Y", "5.65%"], ["4Y", "33.78%"]]} />
         </View>
 
         <View style={styles.stats}>
           <Text style={styles.annualRoi}>+116.56%</Text>
-
           <View style={styles.aumBox}>
             <Text style={styles.aumValue}>{bot.amount} USDT</Text>
             <Text style={styles.aumLabel}>AUM (ETH)</Text>
           </View>
         </View>
+
         <Text style={styles.time}>Time: {liveAge}</Text>
 
         <View style={styles.graphBox}>
-          <Image
-            source={require('../../assets/images/chart.png')}
-            style={styles.graphImage}
-            resizeMode="contain"
-          />
+          <Image source={require('../../assets/images/chart.png')} style={styles.graphImage} resizeMode="contain" />
         </View>
 
-        <TouchableOpacity
-          style={styles.followButton}
-          onPress={async () => {
-            try {
-              const response = await Api.post("/submit-pending-bot", {
-                coin_name: bot.coin_name,
-                amount: bot.amount,
-                leverage: bot.leverage,
-                upper_limit: bot.upper_limit,
-                lower_limit: bot.lower_limit,
-                grid: bot.grid
-              });
-
-              if (response.data.success) {
-                navigation.navigate("RuningBot");
-              } else {
-                alert(response.data.message || "Failed to follow bot.");
-              }
-            } catch (err) {
-              console.error(err);
-              alert("Error following bot.");
-            }
-          }}
-        >
+        <TouchableOpacity style={styles.followButton} onPress={() => handleFollow(bot, navigation)}>
           <Text style={styles.followText}>Follow</Text>
         </TouchableOpacity>
       </View>
@@ -135,6 +122,17 @@ function ROIBox({ label, value, positive = true }) {
       <Text style={[styles.roiValue, { color: positive ? '#28a745' : '#dc3545' }]}>
         {value}
       </Text>
+    </View>
+  );
+}
+
+// Reusable row of ROI Boxes
+function ROIRow({ values }) {
+  return (
+    <View style={styles.roiRow}>
+      {values.map(([label, value, positive = true]) => (
+        <ROIBox key={label} label={label} value={value} positive={positive} />
+      ))}
     </View>
   );
 }

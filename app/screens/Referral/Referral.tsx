@@ -346,7 +346,6 @@ const { t, i18n } = useTranslation();
           <Text style={{ ...FONTS.font, color: colors.text, flex: 1 }}>{data.num}</Text>
           <Text style={{ ...FONTS.font, color: colors.text, flex: 2 }}>{data.split}</Text>
           <Text style={{ ...FONTS.font, color: colors.text, flex: 1 }}>{data.referrals}</Text>
-          <Text style={{ ...FONTS.font, color: colors.text, flex: 1, textAlign: 'right' }}>{data.amount}</Text>
         </View>
       ))}
                     </View>
