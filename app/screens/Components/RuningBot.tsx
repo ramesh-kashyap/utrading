@@ -1,73 +1,70 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // 👈 Add this
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Header from '../../layout/Header';
-import AlgoOverview from './AlgoOverview';
 import Api from "../../../services/Api";
+import { useLiveBotAge } from './BotDateHelper';
 
 export default function PhoenixCard() {
-      const navigation = useNavigation(); // 👈 Hook for navigation
-        const [botData, setBotData] = useState([]);
-     const [message, setMessage] = useState('');
-          const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
+  const [botData, setBotData] = useState([]);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(true);
 
+  const getInfo = async () => {
+    setLoading(true);
+    try {
+      const response = await Api.get("/future-runing-bot-latest");
+      if (response.data.success) {
+        setBotData(response.data.bots);
+      } else {
+        setMessage(response.data.message || 'No data found');
+      }
+    } catch (error) {
+      console.error('Error fetching future bots:', error);
+      setMessage('Failed to load bots');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-          const getInfo = async () => {
-            setLoading(true);
-            try {
-                const response = await Api.get("/future-runing-bot-latest");
-                if (response.data.success) {
-                  console.log(response);
-                  setBotData(response.data.bots); // ✅ updated based on response key
-                } else {
-                  console.error('Error fetching future bots:', error);
-        
-                  setMessage(response.data.message || 'No data found');
-                }
-            } catch (error) {
-            console.error('Error fetching future bots:', error);
-                setMessage('Failed to load bots');
-            }
-            finally {
-                setLoading(false); // Ensure UI updates after fetching
-            }
-        };
-        
-        
-           useEffect(()=>{
-            getInfo();
-           },[]);
-         
+  useEffect(() => {
+    getInfo();
+  }, []);
+
   return (
-    <View style={styles.container}>
- 
- <Header
-                title='Strategy'
-                leftIcon='back'
-            />
-{botData.length === 0 ? (
-  <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>No data found</Text>
-) : (
-  botData.map((bot) => (
+    <ScrollView style={styles.container}>
+      <Header title='Strategy' leftIcon='back' />
 
+      {botData.length === 0 ? (
+        <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>{message}</Text>
+      ) : (
+        botData.map((bot) => (
+          <BotCard key={bot.id} bot={bot} />
+        ))
+      )}
+    </ScrollView>
+  );
+}
+
+function BotCard({ bot }) {
+  const liveAge = useLiveBotAge(bot.created_at);
+
+  return (
     <View style={styles.card}>
-      {/* Top header */}
       <View style={styles.header}>
         <Text style={styles.title}>{bot.coin_name}-{bot.leverage}X</Text>
-
         <View style={styles.badges}>
           <Text style={styles.futuresBadge}>Futures</Text>
           <Text style={styles.coinmBadge}>COINm</Text>
         </View>
       </View>
 
-      {/* Sub info */}
       <View style={styles.subHeader}>
         <Text style={styles.subText}>{bot.coin_name} | 139 Followers</Text>
         <Text style={styles.leverage}>{bot.leverage}x Leverage</Text>
       </View>
 
-      {/* ROI Section */}
       <View style={styles.roiTabs}>
         <View style={styles.roiRow}>
           <ROIBox label="3M" value="-12.79%" positive={false} />
@@ -81,37 +78,28 @@ export default function PhoenixCard() {
         </View>
       </View>
 
-      {/* ROI + AUM */}
       <View style={styles.stats}>
         <Text style={styles.annualRoi}>+116.56%</Text>
+
         <View style={styles.aumBox}>
-          <Text style={styles.aumValue}>{bot.amount} USDT </Text>
+          <Text style={styles.aumValue}>{bot.amount} USDT</Text>
           <Text style={styles.aumLabel}>AUM (ETH)</Text>
         </View>
-      </View>          
-
-
-      {/* Graph Image Placeholder */}
-      <View style={styles.graphBox}>
-      <Image
-  source={require('../../assets/images/chart.png')}
-  style={styles.graphImage}
-  resizeMode="contain"
-/>
-
       </View>
-      {/* Follow Button */}
-      <TouchableOpacity style={styles.followButton} >
-        <Text style={styles.followText}>Bot Runing </Text>
+      <Text style={styles.time}>Time: {liveAge}</Text>
+
+      <View style={styles.graphBox}>
+        <Image
+          source={require('../../assets/images/chart.png')}
+          style={styles.graphImage}
+          resizeMode="contain"
+        />
+      </View>
+
+      <TouchableOpacity style={styles.followButton}>
+        <Text style={styles.followText}>Bot Running</Text>
       </TouchableOpacity>
-
     </View>
-  ))
-    )}
-    <AlgoOverview />
-
-    </View>
-
   );
 }
 
@@ -119,11 +107,8 @@ function ROIBox({ label, value, positive = true }) {
   return (
     <View style={styles.roiBox}>
       <Text style={styles.roiLabel}>{label}</Text>
-      <Text style={[styles.roiValue, { color: positive ? '#28a745' : '#dc3545' }]}>
-        {value}
-      </Text>
+      <Text style={[styles.roiValue, { color: positive ? '#28a745' : '#dc3545' }]}>{value}</Text>
     </View>
-
   );
 }
 const styles = StyleSheet.create({
@@ -180,6 +165,11 @@ const styles = StyleSheet.create({
     subText: {
       fontSize: 12,
       color: '#aaa'
+    },
+    time: {
+      borderRadius: 4,
+      fontSize: 12,
+      color: '#fff'
     },
     leverage: {
       backgroundColor: '#1e1e1e',

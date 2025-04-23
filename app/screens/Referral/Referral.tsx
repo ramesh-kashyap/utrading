@@ -13,53 +13,15 @@ import * as Linking from 'expo-linking'
 import { useEffect , useState} from 'react';
 import { useTranslation } from 'react-i18next'; 
 import Api from "../../../services/Api";
+
 const socialLink = [
     {
         icon : IMAGES.facebook,
     },
-    // {
-    //     icon : IMAGES.whatsapp,
-    // },
-    // {
-    //     icon : IMAGES.instagram,
-    // },
-    // {
-    //     icon : IMAGES.twitter,
-    // },
+   
 ]
 
-const tableData = [
-    {
-        num:'#1',
-        split:'8%',
-        referrals:'3',
-        amount:'(0.01 BTC)',
-    },
-    {
-        num:'#2',
-        split:'6%',
-        referrals:'13',
-        amount:'(0.03 BTC)',
-    },
-    {
-        num:'#3',
-        split:'3%',
-        referrals:'25',
-        amount:'(0.02 BTC)',
-    },
-    {
-        num:'#4',
-        split:'2%',
-        referrals:'37',
-        amount:'(0.05 BTC)',
-    },
-    {
-        num:'#5',
-        split:'1%',
-        referrals:'59',
-        amount:'(0.04 BTC)',
-    },
-]
+
 
 
 
@@ -96,6 +58,7 @@ const { t, i18n } = useTranslation();
     const {colors} : {colors : any} = useTheme();
     const [loading, setLoading] = useState(false);
     const [reffrial, setReffrial] =useState();
+    const [tableData, setTableData] = useState([]);
 
 
     const getReffrial = async () => {
@@ -120,6 +83,33 @@ const { t, i18n } = useTranslation();
     
        useEffect(()=>{
         getReffrial();
+       },[]);
+
+
+       const fetchDirectTeam = async () => {
+        setLoading(true);
+        try {
+            const response = await Api.get("/getDirectTeam");
+            console.log(response);
+
+            if (response.data.success) {
+                setTableData(response.data.team); // assuming data is in `team`
+            } else {
+                console.error(response.data,"error");
+
+                throw new Error(response.data.message || 'Unable to fetch team');
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+        finally {
+            setLoading(false); // Ensure UI updates after fetching
+        }
+    };
+    
+    
+       useEffect(()=>{
+        fetchDirectTeam();
        },[]);
 
     return (
@@ -344,21 +334,21 @@ const { t, i18n } = useTranslation();
                             <Text style={{...FONTS.fontSm,color:colors.title,flexGrow:100,paddingHorizontal:10}}>{t('referrals')}</Text>
                             <Text style={{...FONTS.fontSm,color:colors.title,flexGrow:100,paddingHorizontal:10,textAlign:'right'}}>{t('amountEarned')}</Text>
                         </View>
-                        {tableData.map((data,index) => {
-                            return(
-                                <View key={index}
-                                    style={{
-                                        flexDirection:'row',
-                                        paddingVertical:8,
-                                    }}
-                                >
-                                    <Text style={{...FONTS.font,color:colors.text,flexGrow:100,paddingHorizontal:10}}>{data.num}</Text>
-                                    <Text style={{...FONTS.font,color:colors.text,flexGrow:150,paddingHorizontal:10}}>{data.split}</Text>
-                                    <Text style={{...FONTS.font,color:colors.text,flexGrow:100,paddingHorizontal:10}}>{data.referrals}</Text>
-                                    <Text style={{...FONTS.font,color:colors.text,flexGrow:100,paddingHorizontal:10,textAlign:'right'}}>{data.amount}</Text>
-                                </View>
-                            )
-                        })}
+                        {tableData.map((data, index) => (
+        <View
+          key={index}
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 8,
+            paddingHorizontal: 10,
+          }}
+        >
+          <Text style={{ ...FONTS.font, color: colors.text, flex: 1 }}>{data.num}</Text>
+          <Text style={{ ...FONTS.font, color: colors.text, flex: 2 }}>{data.split}</Text>
+          <Text style={{ ...FONTS.font, color: colors.text, flex: 1 }}>{data.referrals}</Text>
+          <Text style={{ ...FONTS.font, color: colors.text, flex: 1, textAlign: 'right' }}>{data.amount}</Text>
+        </View>
+      ))}
                     </View>
                     
 

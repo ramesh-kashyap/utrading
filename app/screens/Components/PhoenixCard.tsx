@@ -1,150 +1,130 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image,ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // 👈 Add this
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Header from '../../layout/Header';
 import Api from "../../../services/Api";
+import { useLiveBotAge } from './BotDateHelper';
 
 export default function PhoenixCard() {
-  
-  
-  const navigation = useNavigation(); // 👈 Hook for navigation
+  const navigation = useNavigation();
   const [botData, setBotData] = useState([]);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
 
-
   const getInfo = async () => {
     setLoading(true);
     try {
-        const response = await Api.get("/future-bot");
-        if (response.data.success) {
-          setBotData(response.data.bots); // ✅ updated based on response key
-        } else {
-          console.error('Error fetching future bots:', error);
-
-          setMessage(response.data.message || 'No data found');
-        }
-    } catch (error) {
-    console.error('Error fetching future bots:', error);
-        setMessage('Failed to load bots');
-    }
-    finally {
-        setLoading(false); // Ensure UI updates after fetching
-    }
-};
-
-
-   useEffect(()=>{
-    getInfo();
-   },[]);
- 
-  
-  return (
-    
-    <ScrollView style={styles.container}>
-      
-       <Header
-                title='Strategy'
-                leftIcon='back'
-            />
-
-
-{botData.length === 0 ? (
-  <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>No data found</Text>
-) : (
-    botData.map((bot) => (
-
-            
- <TouchableOpacity onPress={() => {
-                
-                navigation.navigate('AlgoOverview'); // 👈 Navigate to your bot page
-              }} >
-    <View style={styles.card} >
-      {/* Top header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>{bot.coin_name}-{bot.leverage}X</Text>
-
-        <View style={styles.badges}>
-          <Text style={styles.futuresBadge}>Futures</Text>
-          <Text style={styles.coinmBadge}>COINm</Text>
-        </View>
-      </View>
-
-      {/* Sub info */}
-      <View style={styles.subHeader}>
-        <Text style={styles.subText}>{bot.coin_name} | 139 Followers</Text>
-        <Text style={styles.leverage}>{bot.leverage}x Leverage</Text>
-      </View>
-
-      {/* ROI Section */}
-      <View style={styles.roiTabs}>
-        <View style={styles.roiRow}>
-          <ROIBox label="3M" value="-12.79%" positive={false} />
-          <ROIBox label="6M" value="41.15%" />
-          <ROIBox label="1Y" value="116.56%" />
-        </View>
-        <View style={styles.roiRow}>
-          <ROIBox label="2Y" value="318.38%" />
-          <ROIBox label="3Y" value="5.65%" />
-          <ROIBox label="4Y" value="33.78%" />
-        </View>
-      </View>
-
-      {/* ROI + AUM */}
-      <View style={styles.stats}>
-        <Text style={styles.annualRoi}>+116.56%</Text>
-        <View style={styles.aumBox}>
-          <Text style={styles.aumValue}>{bot.amount} USDT</Text>
-          <Text style={styles.aumLabel}>AUM (ETH)</Text>
-        </View>
-      </View>
-
-      {/* Graph Image Placeholder */}
-      <View style={styles.graphBox}>
-      <Image
-  source={require('../../assets/images/chart.png')}
-  style={styles.graphImage}
-  resizeMode="contain"
-/>
-
-      </View>
-
-      {/* Follow Button */}
-      <TouchableOpacity
-  style={styles.followButton}
-  onPress={async () => {
-    try {
-      const response = await Api.post("/submit-pending-bot", {
-        coin_name: bot.coin_name,
-        amount: bot.amount,
-        leverage: bot.leverage,
-        upper_limit: bot.upper_limit,    // 👈 hidden field
-        lower_limit: bot.lower_limit,    // 👈 hidden field
-        grid: bot.grid   
-      });
-
+      const response = await Api.get("/future-bot");
       if (response.data.success) {
-        navigation.navigate("RuningBot"); // 👈 redirect to "Running Bot" screen
-
+        setBotData(response.data.bots);
       } else {
-        alert(response.data.message || "Failed to follow bot.");
+        setMessage(response.data.message || 'No data found');
       }
-    } catch (err) {
-      console.error(err);
-      alert("Error following bot.");
+    } catch (error) {
+      console.error('Error fetching future bots:', error);
+      setMessage('Failed to load bots');
+    } finally {
+      setLoading(false);
     }
-  }}
->
-  <Text style={styles.followText}>Follow</Text>
-</TouchableOpacity>
+  };
 
-    </View>
-    </TouchableOpacity>
-   ))
-  )}
-      
+  useEffect(() => {
+    getInfo();
+  }, []);
+
+  return (
+    <ScrollView style={styles.container}>
+      <Header title='Strategy' leftIcon='back' />
+
+      {botData.length === 0 ? (
+        <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>No data found</Text>
+      ) : (
+        botData.map(bot => (
+          <BotCard key={bot.id} bot={bot} navigation={navigation} />
+        ))
+      )}
     </ScrollView>
+  );
+}
 
+function BotCard({ bot, navigation }) {
+  const liveAge = useLiveBotAge(bot.created_at);
+
+  return (
+    <TouchableOpacity onPress={() => navigation.navigate('AlgoOverview')}>
+      <View style={styles.card}>
+        <View style={styles.header}>
+          <Text style={styles.title}>{bot.coin_name}-{bot.leverage}X</Text>
+          <View style={styles.badges}>
+            <Text style={styles.futuresBadge}>Futures</Text>
+            <Text style={styles.coinmBadge}>COINm</Text>
+          </View>
+        </View>
+
+        <View style={styles.subHeader}>
+          <Text style={styles.subText}>{bot.coin_name} | 139 Followers</Text>
+          <Text style={styles.leverage}>{bot.leverage}x Leverage</Text>
+        </View>
+
+        <View style={styles.roiTabs}>
+          <View style={styles.roiRow}>
+            <ROIBox label="3M" value="-12.79%" positive={false} />
+            <ROIBox label="6M" value="41.15%" />
+            <ROIBox label="1Y" value="116.56%" />
+          </View>
+          <View style={styles.roiRow}>
+            <ROIBox label="2Y" value="318.38%" />
+            <ROIBox label="3Y" value="5.65%" />
+            <ROIBox label="4Y" value="33.78%" />
+          </View>
+        </View>
+
+        <View style={styles.stats}>
+          <Text style={styles.annualRoi}>+116.56%</Text>
+
+          <View style={styles.aumBox}>
+            <Text style={styles.aumValue}>{bot.amount} USDT</Text>
+            <Text style={styles.aumLabel}>AUM (ETH)</Text>
+          </View>
+        </View>
+        <Text style={styles.time}>Time: {liveAge}</Text>
+
+        <View style={styles.graphBox}>
+          <Image
+            source={require('../../assets/images/chart.png')}
+            style={styles.graphImage}
+            resizeMode="contain"
+          />
+        </View>
+
+        <TouchableOpacity
+          style={styles.followButton}
+          onPress={async () => {
+            try {
+              const response = await Api.post("/submit-pending-bot", {
+                coin_name: bot.coin_name,
+                amount: bot.amount,
+                leverage: bot.leverage,
+                upper_limit: bot.upper_limit,
+                lower_limit: bot.lower_limit,
+                grid: bot.grid
+              });
+
+              if (response.data.success) {
+                navigation.navigate("RuningBot");
+              } else {
+                alert(response.data.message || "Failed to follow bot.");
+              }
+            } catch (err) {
+              console.error(err);
+              alert("Error following bot.");
+            }
+          }}
+        >
+          <Text style={styles.followText}>Follow</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -158,6 +138,7 @@ function ROIBox({ label, value, positive = true }) {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
 
     card: {
@@ -219,6 +200,11 @@ const styles = StyleSheet.create({
       borderRadius: 4,
       fontSize: 12,
       color: '#00FF84'
+    },
+    time: {
+      borderRadius: 4,
+      fontSize: 12,
+      color: '#fff'
     },
     roiTabs: {
       marginTop: 12

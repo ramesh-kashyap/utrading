@@ -7,6 +7,9 @@ import { View, Text, Button } from 'react-native';
 import Login from '../screens/Auth/Login';
 import Register from '../screens/Auth/Register';
 
+
+
+
 export const GoogleAuthWrapper = () => {
     return (
       <GoogleOAuthProvider  clientId='705111046549-lbh4610l0ddu7opemk0ck1mpccertsa3.apps.googleusercontent.com'>
